@@ -2,13 +2,13 @@
     <div class="admin-wrapper">
         <!-- 左侧导航栏 -->
         <div class="left-nav-wrapper">
-            <left-nav-bar @selectClick="selectClick"></left-nav-bar>
+            <left-nav-bar @selectClick="selectClick" ref="leftNavBar"></left-nav-bar>
         </div>
 
         <div class="right-wrapper">
              <!-- 顶部栏 -->
              <div class="top-bar-wrapper">
-                <top-bar></top-bar>
+                <top-bar @dropdownMenu="dropSelectClick"></top-bar>
              </div>
              <!-- 内容显示区 -->
              <div class="content-wrapper">
@@ -16,6 +16,10 @@
                  <home-content v-show="select==='1'"></home-content>
                  <!-- 客户页面显示内容 -->
                  <customer-content v-show="select==='2'"></customer-content>
+                 <!-- 销售页面 -->
+                 <sell-content v-show="select==='3'"></sell-content>
+                 <!-- 个人中心 -->
+                 <user-content v-show="select==='4'"></user-content>
              </div>
         </div>
     </div>
@@ -26,6 +30,8 @@ import LeftNavBar from "../components/Admin/LeftNavBar"
 import TopBar from "../components/Admin/TopBar"
 import HomeContent from "../components/Admin/HomeContent"
 import CustomerContent from "../components/Admin/CustomerContent"
+import SellContent from "../components/Admin/SellContent"
+import UserContent from "../components/Admin/UserCenter"
 export default {
     data() {
         return {
@@ -36,13 +42,21 @@ export default {
         LeftNavBar,
         TopBar,
         HomeContent,
-        CustomerContent
+        CustomerContent,
+        SellContent,
+        UserContent
     },
     methods: {
         //根据导航栏显示不同内容
         selectClick(index){
             //console.log(index)
             this.select=index
+        },
+        //下拉菜单的点击
+        dropSelectClick(index){
+            this.select=index
+            //调用子组件中的方法
+            this.$refs.leftNavBar.AdminClick(index)
         }
     },
 }

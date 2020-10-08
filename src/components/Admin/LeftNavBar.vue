@@ -12,7 +12,7 @@
       @select="selectClick"
       background-color="#545c64"
       text-color="#fff"
-      active-text-color="#ffd04b">
+      active-text-color="#ffd04b" ref="elMenu">
       <!-- <el-submenu index="1">
         <template slot="title">
           <i class="el-icon-location"></i>
@@ -43,6 +43,10 @@
         <i class="el-icon-coin"></i>
         <span slot="title">销售</span>
       </el-menu-item>
+      <el-menu-item index="4">
+        <i class="el-icon-setting"></i>
+        <span slot="title">个人中心</span>
+      </el-menu-item>
     </el-menu>
     </div>
 </template>
@@ -50,6 +54,12 @@
 <script>
 export default {
     methods: {
+      //父组件调用这个方法
+      AdminClick(index){
+        //console.log(index)
+        //console.log(this.$refs.elMenu.activeIndex)
+        this.$refs.elMenu.activeIndex="4"
+      },
       //菜单点击触发回调 获取上面的index值
       selectClick(index){
         //调用父组件方法

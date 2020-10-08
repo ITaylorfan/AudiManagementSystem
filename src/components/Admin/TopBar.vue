@@ -6,16 +6,56 @@
           placeholder="请输入内容"
           prefix-icon="el-icon-search"
           v-model="inputSearch"
-           clearable
+          clearable
           id="input-search"
         >
         </el-input>
       </div>
+      <!-- 撑空间 -->
+      <div class="blank"></div>
+      <!-- 通知logo -->
+      <div class="notice" v-popover:popover>
+        <i class="el-icon-bell"></i>
+        <div class="count">
+          <span>{{ count }}</span>
+        </div>
+
+        <el-popover placement="right" width="460" trigger="click" ref="popover">
+          <el-table
+            :data="gridData"
+            height="250"
+            :span-method="arraySpanMethod"
+          >
+            <el-table-column
+              width="160"
+              property="date"
+              label="日期"
+            ></el-table-column>
+            <el-table-column
+              width="200"
+              property="content"
+              label="内容"
+            ></el-table-column>
+
+            <el-table-column>
+              <template slot="header">
+                <el-button size="mini" type="danger">清空</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-popover>
+      </div>
     </div>
     <div class="userInfo">
       <div class="avater-wrapper">
-        <div class="avater">
-          <img src="../../assets/images/TS.jpg" alt="" />
+        <div class="avater" id="closeImage">
+          <!-- <img src="../../assets/images/TS.jpg" alt="" /> -->
+          <el-image
+            style="width: 40px; height: 40px;border-radius:50%"
+            :src="url"
+            :preview-src-list="srcList"
+            >
+          </el-image>
         </div>
       </div>
       <div class="name-wrapper">
@@ -23,22 +63,17 @@
       </div>
       <div class="arrow-wrapper">
         <!-- <i class="el-icon-caret-bottom"></i> -->
-        <el-dropdown trigger="click">
-          <span class="el-dropdown-link">
+        <el-dropdown trigger="click" @command="handleCommand">
+          <span class="el-dropdown-link" id="arrow-bottom">
             <i class="el-icon-caret-bottom el-icon--right color"></i>
           </span>
           <div class="marginTop">
+            <!-- 下拉列表 -->
             <el-dropdown-menu slot="dropdown" style="top: 50px">
-              <el-dropdown-item icon="el-icon-plus">黄金糕</el-dropdown-item>
-              <el-dropdown-item icon="el-icon-circle-plus"
-                >狮子头</el-dropdown-item
-              >
-              <el-dropdown-item icon="el-icon-circle-plus-outline"
-                >螺蛳粉</el-dropdown-item
-              >
-              <el-dropdown-item icon="el-icon-check">双皮奶</el-dropdown-item>
-              <el-dropdown-item icon="el-icon-circle-check"
-                >蚵仔煎</el-dropdown-item
+              <el-dropdown-item icon="el-icon-user" command="a">个人中心</el-dropdown-item>
+
+              <el-dropdown-item icon="el-icon-circle-close" id="exitLogin"  command="b"
+                >退出登录</el-dropdown-item
               >
             </el-dropdown-menu>
           </div>
@@ -49,12 +84,84 @@
 </template>
 
 <script>
+import {Admin} from "../../utils/mixin"
 export default {
-    data() {
-        return {
-            inputSearch:""
+  mixins:[Admin],
+  methods: {
+      handleCommand(command) {
+        //console.log(command)
+        switch(command){
+          case "a":
+            this.$emit("dropdownMenu","4")
+            break
+          case "b":
+            break
         }
+      },
+    //去个人用户中心
+    goUserInfoCenter(){
+     this.setIsUserInfoCenter(true)
+     console.log(this.isUserInfoCenter)
     },
+    // 合并列用到的函数
+    arraySpanMethod({ row, column, rowIndex, columnIndex }) {
+      if (rowIndex >= 0) {
+        if (columnIndex === 1) {
+          return [1, 2];
+        } else if (columnIndex === 3) {
+          return [0, 0];
+        }
+      }
+    },
+  },
+  data() {
+    return {
+      // 图片预览
+      url:
+        "https://pic.downk.cc/item/5f7b19dd160a154a67b5027d.jpg",
+      srcList: [
+        "https://pic.downk.cc/item/5f7b19dd160a154a67b5027d.jpg"
+      ],
+      //搜索框变量
+      inputSearch: "",
+      gridData: [
+        {
+          date: "2016-05-02  20:00:00",
+          name: "王小虎",
+          content: "上海市普陀区金沙江路 1518 弄啊啊啊啊啊啊阿",
+        },
+        {
+          date: "2016-05-04 21:00:00",
+          name: "王小虎",
+          content: "上海市普陀区金沙江路 1518 弄",
+        },
+        {
+          date: "2016-05-01 22:00:00",
+          name: "王小虎",
+          content: "上海市普陀区金沙江路 1518 弄",
+        },
+        {
+          date: "2016-05-03 23:00:00",
+          name: "王小虎",
+          content: "上海市普陀区金沙江路 1518 弄",
+        },
+        {
+          date: "2016-05-03 20:22:00",
+          name: "王小虎",
+          content: "上海市普陀区金沙江路 1518 弄",
+        },
+      ],
+    };
+  },
+  computed: {
+    count() {
+      return this.gridData.length;
+    },
+    //获取vuex中的值
+    // isUserInfoCenter(){
+    //   return this.$store.getters.getIsUserInfoCenter
+    // }
+  },
 };
 </script>
 
@@ -75,7 +182,32 @@ export default {
     .search-bar {
       background-color: white;
       flex: 0 0 30%;
+    }
+    .blank {
+      flex: 1;
+    }
+    .notice {
+      cursor: pointer;
+      flex: 0 0 50px;
+      height: 100%;
+      color: white;
+      font-size: 20px;
+      @include center;
+      border-left: 1px solid white;
 
+      .count {
+        position: absolute;
+        top: 12px;
+        right: 210px;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background-color: red;
+        @include center;
+        span {
+          font-size: 10px;
+        }
+      }
     }
   }
   .userInfo {
@@ -112,7 +244,7 @@ export default {
       padding-left: 10px;
       color: white;
     }
-    .arrow-wrapper {
+    .arrow-wrapper { 
       flex: 0 0 40px;
       height: 100%;
       color: white;
@@ -133,8 +265,16 @@ export default {
 
 <style lang="scss">
 // 用于重置elui样式
-    #input-search{
-        border: none;
-       
-    }
+#input-search {
+  border: none;
+}
+#exitLogin {
+  color: red;
+}
+#closeImage{
+  color: white;
+}
+#arrow-bottom{
+  cursor: pointer;
+}
 </style>

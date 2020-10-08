@@ -4,7 +4,9 @@ import router from './router'
 import store from './store'
 import { Button ,Form,FormItem, Input,Divider, MenuItem,
   MenuItemGroup, Menu,Submenu, Dropdown, DropdownMenu,
-  DropdownItem, Table,TableColumn,} from 'element-ui';
+  DropdownItem, Table,TableColumn, Popover, Image,  Select,
+  Option, Col, DatePicker,TimePicker, Checkbox, Switch, CheckboxGroup, Radio,
+  RadioGroup, Upload,Dialog,} from 'element-ui';
   // 导入echarts
   import echarts from 'echarts'
 Vue.prototype.$echarts = echarts
@@ -25,6 +27,20 @@ Vue.use(DropdownMenu)
 Vue.use(DropdownItem)
 Vue.use(Table)
 Vue.use(TableColumn)
+Vue.use(Popover)
+Vue.use(Image)
+Vue.use(Select)
+Vue.use(Option)
+Vue.use(Col)
+Vue.use(DatePicker)
+Vue.use(TimePicker)
+Vue.use(Checkbox)
+Vue.use(CheckboxGroup)
+Vue.use(Switch)
+Vue.use(Radio)
+Vue.use(RadioGroup)
+Vue.use(Upload)
+Vue.use(Dialog)
 
 new Vue({
   router,

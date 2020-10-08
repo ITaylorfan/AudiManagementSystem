@@ -1,6 +1,6 @@
 <template>
   <!-- 客户组件 -->
-  <div class="customer-content-wrapper">
+  <div class="sell-content-wrapper">
     <el-table
       :data="
         tableData.filter(
@@ -24,7 +24,7 @@
             <el-form-item label="所属店铺">
               <span>{{ props.row.shop }}</span>
             </el-form-item>
-            <el-form-item label="用户 ID">
+            <el-form-item label="商品 ID">
               <span>{{ props.row.id }}</span>
             </el-form-item>
             <el-form-item label="店铺 ID">
@@ -42,10 +42,21 @@
           </el-form>
         </template>
       </el-table-column>
-      <!-- 表头 -->
-      <el-table-column label="用户 ID" prop="id"> </el-table-column>
-      <el-table-column label="用户名称" prop="name"> </el-table-column>
-      <el-table-column label="购车信息" prop="desc"> </el-table-column>
+      <el-table-column label="车辆 ID" prop="id"> </el-table-column>
+      <el-table-column label="车辆型号" prop="name"> </el-table-column>
+      <!-- 图片预览 -->
+      <el-table-column label="预览图">
+        <template slot-scope="props">
+          <div id="closeImage">
+          <el-image
+            style="width: 60px; height: 40px"
+            :src="props.row.desc"
+            :preview-src-list="props.row.srcList"        
+          >
+          </el-image>
+          </div>
+        </template>
+      </el-table-column>
 
       <el-table-column align="right">
         <template slot="header">
@@ -84,7 +95,10 @@ export default {
           id: "12987122",
           name: "好滋好味鸡蛋仔",
           category: "江浙小吃、小吃零食",
-          desc: "荷兰优质淡奶，奶香浓而不腻",
+          desc: "https://pic.downk.cc/item/5f7c5bb1160a154a67fad24f.jpg",
+          srcList: [
+          "https://pic.downk.cc/item/5f7c5bb1160a154a67fad24f.jpg"
+          ],
           address: "上海市普陀区真北路",
           shop: "王小虎夫妻店",
           shopId: "10333",
@@ -93,7 +107,10 @@ export default {
           id: "12987123",
           name: "好滋好味鸡蛋仔",
           category: "江浙小吃、小吃零食",
-          desc: "荷兰优质淡奶，奶香浓而不腻",
+          desc: "https://pic.downk.cc/item/5f7c5bb1160a154a67fad24f.jpg",
+           srcList: [
+          "https://pic.downk.cc/item/5f7c5bb1160a154a67fad24f.jpg"
+          ],
           address: "上海市普陀区真北路",
           shop: "王小虎夫妻店",
           shopId: "10333",
@@ -102,7 +119,10 @@ export default {
           id: "12987125",
           name: "好滋好味鸡蛋仔",
           category: "江浙小吃、小吃零食",
-          desc: "荷兰优质淡奶，奶香浓而不腻",
+          desc: "https://pic.downk.cc/item/5f7c5bb1160a154a67fad24f.jpg",
+           srcList: [
+          "https://pic.downk.cc/item/5f7c5bb1160a154a67fad24f.jpg"
+          ],
           address: "上海市普陀区真北路",
           shop: "王小虎夫妻店",
           shopId: "10333",
@@ -111,7 +131,10 @@ export default {
           id: "12987126",
           name: "好滋好味鸡蛋仔",
           category: "江浙小吃、小吃零食",
-          desc: "荷兰优质淡奶，奶香浓而不腻",
+          desc: "https://pic.downk.cc/item/5f7c5bb1160a154a67fad24f.jpg",
+           srcList: [
+          "https://pic.downk.cc/item/5f7c5bb1160a154a67fad24f.jpg"
+          ],
           address: "上海市普陀区真北路",
           shop: "王小虎夫妻店",
           shopId: "10333",
@@ -120,7 +143,10 @@ export default {
           id: "12987126",
           name: "好滋好味鸡蛋仔",
           category: "江浙小吃、小吃零食",
-          desc: "荷兰优质淡奶，奶香浓而不腻",
+          desc: "https://pic.downk.cc/item/5f7c5bb1160a154a67fad24f.jpg",
+           srcList: [
+          "https://pic.downk.cc/item/5f7c5bb1160a154a67fad24f.jpg"
+          ],
           address: "上海市普陀区真北路",
           shop: "王小虎夫妻店",
           shopId: "10333",
@@ -129,7 +155,10 @@ export default {
           id: "12987126",
           name: "好滋好味鸡蛋仔",
           category: "江浙小吃、小吃零食",
-          desc: "荷兰优质淡奶，奶香浓而不腻",
+          desc: "https://pic.downk.cc/item/5f7c5bb1160a154a67fad24f.jpg",
+           srcList: [
+          "https://pic.downk.cc/item/5f7c5bb1160a154a67fad24f.jpg"
+          ],
           address: "上海市普陀区真北路",
           shop: "王小虎夫妻店",
           shopId: "10333",
@@ -138,7 +167,10 @@ export default {
           id: "12987126",
           name: "好滋好味鸡蛋仔",
           category: "江浙小吃、小吃零食",
-          desc: "荷兰优质淡奶，奶香浓而不腻",
+          desc: "https://pic.downk.cc/item/5f7c5bb1160a154a67fad24f.jpg",
+           srcList: [
+          "https://pic.downk.cc/item/5f7c5bb1160a154a67fad24f.jpg"
+          ],
           address: "上海市普陀区真北路",
           shop: "王小虎夫妻店",
           shopId: "10333",
@@ -147,7 +179,10 @@ export default {
           id: "12987126",
           name: "好滋好味鸡蛋仔",
           category: "江浙小吃、小吃零食",
-          desc: "荷兰优质淡奶，奶香浓而不腻",
+          desc: "https://pic.downk.cc/item/5f7c5bb1160a154a67fad24f.jpg",
+           srcList: [
+          "https://pic.downk.cc/item/5f7c5bb1160a154a67fad24f.jpg"
+          ],
           address: "上海市普陀区真北路",
           shop: "王小虎夫妻店",
           shopId: "10333",
@@ -156,7 +191,10 @@ export default {
           id: "12987126",
           name: "好滋好味鸡蛋仔",
           category: "江浙小吃、小吃零食",
-          desc: "荷兰优质淡奶，奶香浓而不腻",
+          desc: "https://pic.downk.cc/item/5f7c5bb1160a154a67fad24f.jpg",
+           srcList: [
+          "https://pic.downk.cc/item/5f7c5bb1160a154a67fad24f.jpg"
+          ],
           address: "上海市普陀区真北路",
           shop: "王小虎夫妻店",
           shopId: "10333",
@@ -165,7 +203,10 @@ export default {
           id: "12987126",
           name: "好滋好味鸡蛋仔",
           category: "江浙小吃、小吃零食",
-          desc: "荷兰优质淡奶，奶香浓而不腻",
+          desc: "https://pic.downk.cc/item/5f7c5bb1160a154a67fad24f.jpg",
+           srcList: [
+          "https://pic.downk.cc/item/5f7c5bb1160a154a67fad24f.jpg"
+          ],
           address: "上海市普陀区真北路",
           shop: "王小虎夫妻店",
           shopId: "10333",
@@ -174,7 +215,10 @@ export default {
           id: "12987126",
           name: "好滋好味鸡蛋仔",
           category: "江浙小吃、小吃零食",
-          desc: "荷兰优质淡奶，奶香浓而不腻",
+          desc: "https://pic.downk.cc/item/5f7c5bb1160a154a67fad24f.jpg",
+           srcList: [
+          "https://pic.downk.cc/item/5f7c5bb1160a154a67fad24f.jpg"
+          ],
           address: "上海市普陀区真北路",
           shop: "王小虎夫妻店",
           shopId: "10333",
@@ -183,7 +227,10 @@ export default {
           id: "12987126",
           name: "好滋好味鸡蛋仔",
           category: "江浙小吃、小吃零食",
-          desc: "荷兰优质淡奶，奶香浓而不腻",
+          desc: "https://pic.downk.cc/item/5f7c5bb1160a154a67fad24f.jpg",
+           srcList: [
+          "https://pic.downk.cc/item/5f7c5bb1160a154a67fad24f.jpg"
+          ],
           address: "上海市普陀区真北路",
           shop: "王小虎夫妻店",
           shopId: "10333",
@@ -192,7 +239,10 @@ export default {
           id: "12987126",
           name: "好滋好味鸡蛋仔",
           category: "江浙小吃、小吃零食",
-          desc: "荷兰优质淡奶，奶香浓而不腻",
+          desc: "https://pic.downk.cc/item/5f7c5bb1160a154a67fad24f.jpg",
+           srcList: [
+          "https://pic.downk.cc/item/5f7c5bb1160a154a67fad24f.jpg"
+          ],
           address: "上海市普陀区真北路",
           shop: "王小虎夫妻店",
           shopId: "10333",
@@ -201,7 +251,10 @@ export default {
           id: "12987126",
           name: "好滋好味鸡蛋仔",
           category: "江浙小吃、小吃零食",
-          desc: "荷兰优质淡奶，奶香浓而不腻",
+          desc: "https://pic.downk.cc/item/5f7c5bb1160a154a67fad24f.jpg",
+           srcList: [
+          "https://pic.downk.cc/item/5f7c5bb1160a154a67fad24f.jpg"
+          ],
           address: "上海市普陀区真北路",
           shop: "王小虎夫妻店",
           shopId: "10333",
@@ -210,7 +263,10 @@ export default {
           id: "12987126",
           name: "好滋好味鸡蛋仔",
           category: "江浙小吃、小吃零食",
-          desc: "荷兰优质淡奶，奶香浓而不腻",
+          desc: "https://pic.downk.cc/item/5f7c5bb1160a154a67fad24f.jpg",
+           srcList: [
+          "https://pic.downk.cc/item/5f7c5bb1160a154a67fad24f.jpg"
+          ],
           address: "上海市普陀区真北路",
           shop: "王小虎夫妻店",
           shopId: "10333",
@@ -219,7 +275,10 @@ export default {
           id: "12987126",
           name: "好滋好味鸡蛋仔",
           category: "江浙小吃、小吃零食",
-          desc: "荷兰优质淡奶，奶香浓而不腻",
+          desc: "https://pic.downk.cc/item/5f7c5bb1160a154a67fad24f.jpg",
+           srcList: [
+          "https://pic.downk.cc/item/5f7c5bb1160a154a67fad24f.jpg"
+          ],
           address: "上海市普陀区真北路",
           shop: "王小虎夫妻店",
           shopId: "10333",
@@ -228,7 +287,10 @@ export default {
           id: "12987126",
           name: "好滋好味鸡蛋仔",
           category: "江浙小吃、小吃零食",
-          desc: "荷兰优质淡奶，奶香浓而不腻",
+          desc: "https://pic.downk.cc/item/5f7c5bb1160a154a67fad24f.jpg",
+           srcList: [
+          "https://pic.downk.cc/item/5f7c5bb1160a154a67fad24f.jpg"
+          ],
           address: "上海市普陀区真北路",
           shop: "王小虎夫妻店",
           shopId: "10333",
@@ -237,7 +299,7 @@ export default {
     };
   },
   methods: {
-        // 合并列用到的函数
+    // 合并列用到的函数
     arraySpanMethod({ row, column, rowIndex, columnIndex }) {
       if (rowIndex >= 0) {
         if (columnIndex === 3) {
@@ -252,7 +314,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.customer-content-wrapper {
+.sell-content-wrapper {
   box-sizing: border-box;
   width: 100%;
   height: 100%;
@@ -273,5 +335,11 @@ export default {
     margin-bottom: 0;
     width: 50%;
   }
+}
+</style>
+
+<style lang="scss">
+  #closeImage{
+  color: white;
 }
 </style>
