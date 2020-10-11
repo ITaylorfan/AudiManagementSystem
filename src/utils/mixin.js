@@ -3,10 +3,10 @@ import {mapActions,mapGetters} from "vuex"
 export const Admin={
         //变量
         computed: {
-            ...mapGetters(["isUserInfoCenter"])
+            ...mapGetters(["isUserInfoCenter","isLogin"])
         },
         //方法
         methods: {
-            ...mapActions(["setIsUserInfoCenter"]),
+            ...mapActions(["setIsUserInfoCenter","setIsLogin"]),
         },
 }

@@ -26,7 +26,9 @@
 
 <script>
 import LoginInput from "../components/LoginInput"
+import {Admin} from "../utils/mixin"
 export default {
+    mixins:[Admin],
     data() {
         return {
             isLoginInput:false
@@ -37,7 +39,14 @@ export default {
     },
     methods: {
         openLoginInput(){
-            this.isLoginInput=true
+            //console.log(this.isLogin)
+            if(this.isLogin){
+                //已经登录就直接跳转
+                this.$router.push("Admin")
+            }else{
+                this.isLoginInput=true
+            }
+            
         },
         closeLoginInput(){
             this.isLoginInput=false

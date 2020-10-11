@@ -2,14 +2,19 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import axios from "axios"
 import { Button ,Form,FormItem, Input,Divider, MenuItem,
   MenuItemGroup, Menu,Submenu, Dropdown, DropdownMenu,
   DropdownItem, Table,TableColumn, Popover, Image,  Select,
   Option, Col, DatePicker,TimePicker, Checkbox, Switch, CheckboxGroup, Radio,
-  RadioGroup, Upload,Dialog,} from 'element-ui';
+  RadioGroup, Upload,Dialog,Message,} from 'element-ui';
   // 导入echarts
   import echarts from 'echarts'
+
+  //在原型中加入，方便调用
 Vue.prototype.$echarts = echarts
+Vue.prototype.$axios=axios
+Vue.prototype.$message=Message
 
 Vue.config.productionTip = false
 
@@ -41,6 +46,7 @@ Vue.use(Radio)
 Vue.use(RadioGroup)
 Vue.use(Upload)
 Vue.use(Dialog)
+
 
 new Vue({
   router,

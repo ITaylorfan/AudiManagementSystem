@@ -95,6 +95,10 @@ export default {
             this.$emit("dropdownMenu","4")
             break
           case "b":
+            //退出登录
+            this.setIsLogin(false)
+            this.$router.push("Login")
+            //console.log(this.isLogin)
             break
         }
       },
