@@ -4,6 +4,9 @@ const actions={
     },
     setIsLogin({commit},isLogin){
         return commit("SET_IS_LOGIN",isLogin)
+    },
+    setAdministratorsInfo({commit},administratorsInfo){
+        return commit("SET_ADMINISTRATORS_INFO",administratorsInfo)
     }
 }
 

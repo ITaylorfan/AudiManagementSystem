@@ -43,8 +43,13 @@
             list-type="picture-card"
             :auto-upload="false"
             :limit="1"
+            :disabled="false"
+            ref="upload"
+            id="uploader"
           >
-            <el-button size="small" type="primary">点击上传</el-button>
+            <el-button size="small" type="primary" @click="imagetip"
+              >点击上传</el-button
+            >
             <div slot="tip" class="el-upload__tip">
               <!-- 用来插入提示信息 -->
             </div>
@@ -66,7 +71,15 @@
 </template>
 
 <script>
+import { Admin } from "../../utils/mixin";
+import { DateToString } from "../../api/index";
 export default {
+  mixins: [Admin],
+  watch: {
+    // '$store.state.administratorsInfo': function (v) {
+    //   console.log(v)
+    // }
+  },
   data() {
     return {
       // 图片上传相关
@@ -79,16 +92,21 @@ export default {
         name: "",
         sex: "",
         birthday: "",
-            //文件列表
-      fileList: [
-     
-      ],
+        //文件列表
+        fileList: [
+          // {url:"https://pic.downk.cc/item/5f7b19dd160a154a67b5027d.jpg"}
+        ],
       },
       //校验规则
       rules: {
         name: [
           { required: true, message: "请输入用户名称", trigger: "blur" },
-          { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" },
+          {
+            min: 3,
+            max: 15,
+            message: "长度在 3 到 15 个字符",
+            trigger: "blur",
+          },
         ],
         sex: [{ required: true, message: "请选择性别", trigger: "change" }],
         birthday: [
@@ -111,11 +129,63 @@ export default {
     };
   },
   methods: {
+    //图片超出上传次数提示
+    imagetip() {
+      if (this.ruleForm.fileList.length === 1) {
+        let hanle = function (event) {
+          //阻止浏览器默认事件
+          if (event.preventDefault && event) {
+            event.preventDefault();
+          }
+        };
+        if (this.ruleForm.fileList.length === 1) {
+           let inputFile = document
+          .getElementById("uploader")
+          .getElementsByTagName("div")[0]
+          .getElementsByTagName("input")[0];
+          //console.log(inputFile)
+          //此变量是判断是否已经上传文件
+          inputFile.addEventListener("click", hanle, false); //满足条件给input绑定事件
+          this.$message.error("只能上传一张图片！");
+          setTimeout(function () {
+            inputFile.removeEventListener("click", hanle, false); //移除事件
+          }, 500);
+        } else {
+          //如果将 inputFile.removeEventListener('click',hanle,false)写在else,不能移除hanle事件
+        }
+      }
+    },
     submitForm(formName) {
       //console.log(this.ruleForm.fileList)
       this.$refs[formName].validate((valid) => {
         if (valid) {
           alert("submit!");
+          //封装成对象
+          //new Date(data).format("yyyy/MM/dd");
+          var date = new Date();
+          //console.log(date.getTime())
+          //console.log(new Date(date.getTime()-this.ruleForm.birthday).format("yyyy-MM-dd"));
+          //计算出年龄
+          //console.log((date.getTime()-this.ruleForm.birthday)/1000/60/60/24/365)
+
+          //封装对象数据
+          let data = {
+            nickname: this.ruleForm.name,
+            sex: this.ruleForm.sex,
+            birthday: new Date(this.ruleForm.birthday).format("yyyy-MM-dd"),
+            avatar: this.ruleForm.fileList[0].url,
+            age: Math.floor(
+              (date.getTime() - this.ruleForm.birthday) /
+                1000 /
+                60 /
+                60 /
+                24 /
+                365
+            ),
+          };
+          console.log(this.ruleForm.fileList[0].url)
+     
+          console.log(data);
         } else {
           console.log("error submit!!");
           return false;
@@ -129,15 +199,15 @@ export default {
 
     //图片上传相关方法
     //图片上传状态改变的钩子
-    changeUpload(file, fileList){
-      this.ruleForm.fileList=fileList
+    changeUpload(file, fileList) {
+      this.ruleForm.fileList = fileList;
       // console.log(fileList)
       // console.log(this.ruleForm.fileList)
     },
     //移除
     handleRemove(file, fileList) {
       //两个fileList不是一个东西 一个是自己的变量 一个是upload中的fileList
-      this.ruleForm.fileList=fileList 
+      this.ruleForm.fileList = fileList;
     },
     //图片预览
     handlePictureCardPreview(file) {
@@ -145,9 +215,8 @@ export default {
       this.dialogVisible = true;
     },
 
-  
     beforeAvatarUpload(file) {
-      console.log(file)
+      console.log(file);
       const isJPG = file.type === "image/jpeg";
       const isLt2M = file.size / 1024 / 1024 < 2;
 
@@ -159,6 +228,23 @@ export default {
       }
       return isJPG && isLt2M;
     },
+  },
+
+  mounted() {
+    //console.log(this.administratorsInfo.nickname);
+    //给表单中赋值
+    if (this.administratorsInfo.nickname) {
+      //昵称
+      this.ruleForm.name = this.administratorsInfo.nickname;
+      //性别
+      this.ruleForm.sex = this.administratorsInfo.sex;
+      //头像
+      this.ruleForm.fileList.push({ url: this.administratorsInfo.avatar });
+      //生日
+      this.ruleForm.birthday = Date.parse(this.administratorsInfo.birthday);
+      //console.log(this.ruleForm.birthday)
+      //console.log(this.ruleForm.fileList[0])
+    }
   },
 };
 </script>

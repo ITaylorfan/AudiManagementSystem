@@ -90,4 +90,40 @@ router.post('/register',(req,res)=>{
 
 })
 
+//获取用户信息
+router.post('/administratorsInfo',(req,res)=>{
+    var params=req.body;
+    console.log(params)
+    var sql=`select * from logininfo where manageId=${params.manageId}`;
+    conn.query(sql,function(error,result){
+        if(error){
+            console.log(error);
+            jsonWrite(res, error);
+        }
+        if(result){
+            //返回结果
+            jsonWrite(res, result);
+            console.log(result)
+        }
+    })
+
+})
+//获取通知信息
+router.get('/notice',(req,res)=>{
+    var params=req.body;
+    console.log(params)
+    var sql=`select * from notice`;
+    conn.query(sql,function(error,result){
+        if(error){
+            console.log(error);
+            jsonWrite(res, error);
+        }
+        if(result){
+            //返回结果
+            jsonWrite(res, result);
+            console.log(result)
+        }
+    })
+
+})
 module.exports = router;

@@ -19,7 +19,7 @@
                  <!-- 销售页面 -->
                  <sell-content v-show="select==='3'"></sell-content>
                  <!-- 个人中心 -->
-                 <user-content v-show="select==='4'"></user-content>
+                 <user-content v-if="select==='4'"></user-content>
              </div>
         </div>
     </div>

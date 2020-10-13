@@ -157,7 +157,7 @@ export default {
               this.ruleForm.pass=""
             }
           },error=>{
-            console.log(error)
+            console.log("出错了",error)
           });
         } else {
           console.log("error submit!!");

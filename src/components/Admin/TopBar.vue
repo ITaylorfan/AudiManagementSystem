@@ -59,7 +59,7 @@
         </div>
       </div>
       <div class="name-wrapper">
-        <span>ITaylorfan</span>
+        <span>{{dataList.nickname}}</span>
       </div>
       <div class="arrow-wrapper">
         <!-- <i class="el-icon-caret-bottom"></i> -->
@@ -85,6 +85,7 @@
 
 <script>
 import {Admin} from "../../utils/mixin"
+import { administratorsInfo,notice } from "@/api/index.js";
 export default {
   mixins:[Admin],
   methods: {
@@ -120,9 +121,11 @@ export default {
   },
   data() {
     return {
+      //数据
+      dataList:{},
       // 图片预览
-      url:
-        "https://pic.downk.cc/item/5f7b19dd160a154a67b5027d.jpg",
+      url:"https://pic.downk.cc/item/5f7b19dd160a154a67b5027d.jpg",
+        
       srcList: [
         "https://pic.downk.cc/item/5f7b19dd160a154a67b5027d.jpg"
       ],
@@ -134,26 +137,7 @@ export default {
           name: "王小虎",
           content: "上海市普陀区金沙江路 1518 弄啊啊啊啊啊啊阿",
         },
-        {
-          date: "2016-05-04 21:00:00",
-          name: "王小虎",
-          content: "上海市普陀区金沙江路 1518 弄",
-        },
-        {
-          date: "2016-05-01 22:00:00",
-          name: "王小虎",
-          content: "上海市普陀区金沙江路 1518 弄",
-        },
-        {
-          date: "2016-05-03 23:00:00",
-          name: "王小虎",
-          content: "上海市普陀区金沙江路 1518 弄",
-        },
-        {
-          date: "2016-05-03 20:22:00",
-          name: "王小虎",
-          content: "上海市普陀区金沙江路 1518 弄",
-        },
+        
       ],
     };
   },
@@ -165,6 +149,42 @@ export default {
     // isUserInfoCenter(){
     //   return this.$store.getters.getIsUserInfoCenter
     // }
+  },
+
+  mounted() {
+    //console.log("topbar")
+    let data={
+      manageId:1
+    }
+    administratorsInfo(data).then(success=>{
+      //console.log(success)
+      this.dataList=success.data[0]
+      this.url=this.dataList.avatar,
+      this.srcList[0]=this.dataList.avatar
+      //装到vuex中方便其他地方掉用
+      this.setAdministratorsInfo(this.dataList)
+      //console.log(this.dataList)
+    },error=>{
+      console.log(error)
+      let data={
+        nickname:"error"
+      }
+      this.dataList=data
+    })
+
+    notice().then(success=>{
+      console.log(success)
+      this.gridData=success.data
+      //调用原型扩展函数进行转换
+      console.log(new Date(this.gridData[0].date).format("yyyy-MM-dd h:m:s"))
+      this.gridData.forEach((item,index)=>{
+        console.log(item)
+        item.date=new Date(item.date).format("yyyy-MM-dd h:m:s")
+      })
+      //需要转化时间格式
+    },error=>{
+
+    })
   },
 };
 </script>

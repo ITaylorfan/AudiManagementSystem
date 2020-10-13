@@ -27,7 +27,7 @@ export default {
     legend: {
         orient: 'vertical',
         left: 10,
-        data: ['奥迪A3', '奥迪A4', '奥迪A5', '奥迪A6', '奥迪A7','奥迪A8']
+        data: ['奥迪A3', '奥迪A4', '奥迪A5', '奥迪A6', '奥迪A7','奥迪A8','奥迪Q3','奥迪Q5','奥迪Q7','奥迪Q8']
     },
     series: [
         {
@@ -55,7 +55,12 @@ export default {
                 {value: 234, name: '奥迪A5'},
                 {value: 135, name: '奥迪A6'},
                 {value: 1548, name: '奥迪A7'},
-                {value: 500, name: '奥迪A8'}
+                {value: 1048, name: '奥迪A8'},
+                {value: 500, name: '奥迪Q3'},
+                {value: 500, name: '奥迪Q5'},
+                {value: 500, name: '奥迪Q7'},
+                {value: 500, name: '奥迪Q8'},
+
             ]
         }
     ]
