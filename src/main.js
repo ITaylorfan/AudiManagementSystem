@@ -7,7 +7,8 @@ import { Button ,Form,FormItem, Input,Divider, MenuItem,
   MenuItemGroup, Menu,Submenu, Dropdown, DropdownMenu,
   DropdownItem, Table,TableColumn, Popover, Image,  Select,
   Option, Col, DatePicker,TimePicker, Checkbox, Switch, CheckboxGroup, Radio,
-  RadioGroup, Upload,Dialog,Message,} from 'element-ui';
+  RadioGroup, Upload,Dialog,Message, MessageBox, Carousel,
+  CarouselItem,} from 'element-ui';
   // 导入echarts
   import echarts from 'echarts'
 
@@ -15,7 +16,7 @@ import { Button ,Form,FormItem, Input,Divider, MenuItem,
 Vue.prototype.$echarts = echarts
 Vue.prototype.$axios=axios
 Vue.prototype.$message=Message
-
+Vue.prototype.$confirm = MessageBox.confirm;
 Vue.config.productionTip = false
 
 Vue.use(Button)
@@ -46,6 +47,8 @@ Vue.use(Radio)
 Vue.use(RadioGroup)
 Vue.use(Upload)
 Vue.use(Dialog)
+Vue.use(Carousel)
+Vue.use(CarouselItem)
 
 
 new Vue({

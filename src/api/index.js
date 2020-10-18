@@ -23,7 +23,7 @@ export function notice(){
     url:`api/user/notice`,
   })
 }
-
+//根据管理员ID获取管理员信息
 export function administratorsInfo(manageId){
   return axios({
     method:"post",
@@ -31,6 +31,16 @@ export function administratorsInfo(manageId){
     data:manageId
   })
 }
+
+//获取客户信息
+export function getCustomerInfo(){
+  return axios({
+    method:"get",
+    url:`api/user/customerInfo`,
+  })
+}
+
+
 
 //Date对象原型方法扩展
 Date.prototype.format = function (fmt) {

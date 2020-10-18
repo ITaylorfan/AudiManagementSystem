@@ -86,6 +86,7 @@
 <script>
 import {Admin} from "../../utils/mixin"
 import { administratorsInfo,notice } from "@/api/index.js";
+import {saveLoginStatus} from "@/api/localStorage"
 export default {
   mixins:[Admin],
   methods: {
@@ -98,6 +99,7 @@ export default {
           case "b":
             //退出登录
             this.setIsLogin(false)
+            saveLoginStatus("isLogin",false)
             this.$router.push("Login")
             //console.log(this.isLogin)
             break
@@ -173,12 +175,12 @@ export default {
     })
 
     notice().then(success=>{
-      console.log(success)
+      //console.log(success)
       this.gridData=success.data
       //调用原型扩展函数进行转换
-      console.log(new Date(this.gridData[0].date).format("yyyy-MM-dd h:m:s"))
+      //console.log(new Date(this.gridData[0].date).format("yyyy-MM-dd h:m:s"))
       this.gridData.forEach((item,index)=>{
-        console.log(item)
+        //console.log(item)
         item.date=new Date(item.date).format("yyyy-MM-dd h:m:s")
       })
       //需要转化时间格式

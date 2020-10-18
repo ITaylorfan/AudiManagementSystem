@@ -2,13 +2,18 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 //小坑 这里必须引入vuex，不然下面的getters报错
 import store from '../store/index'
-
+import {getLoginStatus} from "@/api/localStorage"
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    redirect:"/Login"
+    redirect:"/Home"
+  },
+  {
+    path:"/Home",
+    name:"Home",
+    component:()=>import("../views/Home")
   },
   {
     path:"/Login",
@@ -27,7 +32,7 @@ const routes = [
   },
   {
     path:"*",
-    component:()=>import("../components/NotFind")
+    component:()=>import("../components/NotFound")
   }
 
 ]
@@ -52,10 +57,17 @@ router.beforeEach((to,from,next)=>{
     
     next()
   }else if(!router.app.$store.getters.isLogin&&to.path=="/Admin"){
-    
-    next({
-      path:"/Login"
-    })
+    //加一层判断 localStorage中的值  刷新时vuex中的值还未取到
+    if(getLoginStatus("isLogin"))
+    {
+      next()
+    }else{
+      next({
+        path:"/Login"
+      })
+    }
+   
+    //next()
   }
 })
 

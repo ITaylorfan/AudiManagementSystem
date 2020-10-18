@@ -54,3 +54,18 @@ $titleColor:#12B4FF;
     justify-content: flex-start;
     align-items: flex-start;
 }
+
+//flex 垂直排列 居右 居上
+@mixin  columnTopRight {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-end;
+}
+// 垂直排列下居中
+@mixin columnBottom {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+}

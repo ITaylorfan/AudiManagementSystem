@@ -55,6 +55,7 @@
 <script>
 import { Admin } from "../utils/mixin";
 import { loginCheck } from "@/api/index.js";
+import {saveLoginStatus} from "@/api/localStorage"
 export default {
   mixins: [Admin],
 
@@ -146,6 +147,9 @@ export default {
               });
               //已登录
               this.setIsLogin("true")
+              //保存登录状态到localStorage
+              saveLoginStatus("isLogin",this.isLogin)
+
               setTimeout(()=>{
                 this.$router.push("Admin");
               },1000)
@@ -157,7 +161,8 @@ export default {
               this.ruleForm.pass=""
             }
           },error=>{
-            console.log("出错了",error)
+            this.$message.error("服务器出错了！")
+            console.log("服务器出错了",error)
           });
         } else {
           console.log("error submit!!");

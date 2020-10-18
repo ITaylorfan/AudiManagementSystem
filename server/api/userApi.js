@@ -90,7 +90,7 @@ router.post('/register',(req,res)=>{
 
 })
 
-//获取用户信息
+//获取登录用户信息
 router.post('/administratorsInfo',(req,res)=>{
     var params=req.body;
     console.log(params)
@@ -126,4 +126,25 @@ router.get('/notice',(req,res)=>{
     })
 
 })
+
+//获取客户信息
+router.get('/customerInfo',(req,res)=>{
+    var params=req.body;
+    console.log(params)
+    var sql=`select * from customerinfo`;
+    conn.query(sql,function(error,result){
+        if(error){
+            console.log(error);
+            jsonWrite(res, error);
+        }
+        if(result){
+            //返回结果
+            jsonWrite(res, result);
+            console.log(result)
+        }
+    })
+
+})
+
+//获取
 module.exports = router;

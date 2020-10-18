@@ -18,34 +18,28 @@
       <el-table-column type="expand">
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand">
-            <el-form-item label="商品名称">
+            <el-form-item label="客户名称">
               <span>{{ props.row.name }}</span>
             </el-form-item>
-            <el-form-item label="所属店铺">
-              <span>{{ props.row.shop }}</span>
+            <el-form-item label="客户 ID">
+              <span>{{ props.row.customerId }}</span>
             </el-form-item>
-            <el-form-item label="用户 ID">
-              <span>{{ props.row.id }}</span>
+            <el-form-item label="客户生日">
+              <span>{{ props.row.birthday }}</span>
             </el-form-item>
-            <el-form-item label="店铺 ID">
-              <span>{{ props.row.shopId }}</span>
-            </el-form-item>
-            <el-form-item label="商品分类">
-              <span>{{ props.row.category }}</span>
-            </el-form-item>
-            <el-form-item label="店铺地址">
+            <el-form-item label="客户地址">
               <span>{{ props.row.address }}</span>
             </el-form-item>
-            <el-form-item label="商品描述">
-              <span>{{ props.row.desc }}</span>
+            <el-form-item label="客户年龄">
+              <span>{{ props.row.age }}</span>
             </el-form-item>
           </el-form>
         </template>
       </el-table-column>
       <!-- 表头 -->
-      <el-table-column label="用户 ID" prop="id"> </el-table-column>
-      <el-table-column label="用户名称" prop="name"> </el-table-column>
-      <el-table-column label="购车信息" prop="desc"> </el-table-column>
+      <el-table-column label="客户 ID" prop="customerId"> </el-table-column>
+      <el-table-column label="客户名称" prop="name"> </el-table-column>
+      <el-table-column label="性别" prop="sex"> </el-table-column>
 
       <el-table-column align="right">
         <template slot="header">
@@ -71,14 +65,49 @@
         </template>
       </el-table-column>
     </el-table>
+
+    <!-- 编辑信息的表单 -->
+    <el-dialog title="编辑信息" :visible.sync="dialogFormVisible">
+      <el-form :model="form">
+        <el-form-item label="客户名称" :label-width="formLabelWidth">
+          <el-input v-model="form.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="性别" :label-width="formLabelWidth">
+          <el-select v-model="form.sex" placeholder="请选择性别">
+            <el-option label="男" value="男"></el-option>
+            <el-option label="女" value="女"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="客户生日" :label-width="formLabelWidth">
+          <el-date-picker
+            type="date"
+            placeholder="选择日期"
+            v-model="form.birthday"
+            :default-value="['2000-01-01']"
+          ></el-date-picker>
+        </el-form-item>
+
+        <el-form-item label="客户地址" :label-width="formLabelWidth">
+          <el-input v-model="form.address" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogFormVisible = false"
+          >确 定</el-button
+        >
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import { getCustomerInfo } from "@/api/index";
 export default {
   data() {
     return {
       search: "",
+      //表格中的数据
       tableData: [
         {
           id: "12987122",
@@ -89,155 +118,47 @@ export default {
           shop: "王小虎夫妻店",
           shopId: "10333",
         },
-        {
-          id: "12987123",
-          name: "好滋好味鸡蛋仔",
-          category: "江浙小吃、小吃零食",
-          desc: "荷兰优质淡奶，奶香浓而不腻",
-          address: "上海市普陀区真北路",
-          shop: "王小虎夫妻店",
-          shopId: "10333",
-        },
-        {
-          id: "12987125",
-          name: "好滋好味鸡蛋仔",
-          category: "江浙小吃、小吃零食",
-          desc: "荷兰优质淡奶，奶香浓而不腻",
-          address: "上海市普陀区真北路",
-          shop: "王小虎夫妻店",
-          shopId: "10333",
-        },
-        {
-          id: "12987126",
-          name: "好滋好味鸡蛋仔",
-          category: "江浙小吃、小吃零食",
-          desc: "荷兰优质淡奶，奶香浓而不腻",
-          address: "上海市普陀区真北路",
-          shop: "王小虎夫妻店",
-          shopId: "10333",
-        },
-        {
-          id: "12987126",
-          name: "好滋好味鸡蛋仔",
-          category: "江浙小吃、小吃零食",
-          desc: "荷兰优质淡奶，奶香浓而不腻",
-          address: "上海市普陀区真北路",
-          shop: "王小虎夫妻店",
-          shopId: "10333",
-        },
-        {
-          id: "12987126",
-          name: "好滋好味鸡蛋仔",
-          category: "江浙小吃、小吃零食",
-          desc: "荷兰优质淡奶，奶香浓而不腻",
-          address: "上海市普陀区真北路",
-          shop: "王小虎夫妻店",
-          shopId: "10333",
-        },
-        {
-          id: "12987126",
-          name: "好滋好味鸡蛋仔",
-          category: "江浙小吃、小吃零食",
-          desc: "荷兰优质淡奶，奶香浓而不腻",
-          address: "上海市普陀区真北路",
-          shop: "王小虎夫妻店",
-          shopId: "10333",
-        },
-        {
-          id: "12987126",
-          name: "好滋好味鸡蛋仔",
-          category: "江浙小吃、小吃零食",
-          desc: "荷兰优质淡奶，奶香浓而不腻",
-          address: "上海市普陀区真北路",
-          shop: "王小虎夫妻店",
-          shopId: "10333",
-        },
-        {
-          id: "12987126",
-          name: "好滋好味鸡蛋仔",
-          category: "江浙小吃、小吃零食",
-          desc: "荷兰优质淡奶，奶香浓而不腻",
-          address: "上海市普陀区真北路",
-          shop: "王小虎夫妻店",
-          shopId: "10333",
-        },
-        {
-          id: "12987126",
-          name: "好滋好味鸡蛋仔",
-          category: "江浙小吃、小吃零食",
-          desc: "荷兰优质淡奶，奶香浓而不腻",
-          address: "上海市普陀区真北路",
-          shop: "王小虎夫妻店",
-          shopId: "10333",
-        },
-        {
-          id: "12987126",
-          name: "好滋好味鸡蛋仔",
-          category: "江浙小吃、小吃零食",
-          desc: "荷兰优质淡奶，奶香浓而不腻",
-          address: "上海市普陀区真北路",
-          shop: "王小虎夫妻店",
-          shopId: "10333",
-        },
-        {
-          id: "12987126",
-          name: "好滋好味鸡蛋仔",
-          category: "江浙小吃、小吃零食",
-          desc: "荷兰优质淡奶，奶香浓而不腻",
-          address: "上海市普陀区真北路",
-          shop: "王小虎夫妻店",
-          shopId: "10333",
-        },
-        {
-          id: "12987126",
-          name: "好滋好味鸡蛋仔",
-          category: "江浙小吃、小吃零食",
-          desc: "荷兰优质淡奶，奶香浓而不腻",
-          address: "上海市普陀区真北路",
-          shop: "王小虎夫妻店",
-          shopId: "10333",
-        },
-        {
-          id: "12987126",
-          name: "好滋好味鸡蛋仔",
-          category: "江浙小吃、小吃零食",
-          desc: "荷兰优质淡奶，奶香浓而不腻",
-          address: "上海市普陀区真北路",
-          shop: "王小虎夫妻店",
-          shopId: "10333",
-        },
-        {
-          id: "12987126",
-          name: "好滋好味鸡蛋仔",
-          category: "江浙小吃、小吃零食",
-          desc: "荷兰优质淡奶，奶香浓而不腻",
-          address: "上海市普陀区真北路",
-          shop: "王小虎夫妻店",
-          shopId: "10333",
-        },
-        {
-          id: "12987126",
-          name: "好滋好味鸡蛋仔",
-          category: "江浙小吃、小吃零食",
-          desc: "荷兰优质淡奶，奶香浓而不腻",
-          address: "上海市普陀区真北路",
-          shop: "王小虎夫妻店",
-          shopId: "10333",
-        },
-        {
-          id: "12987126",
-          name: "好滋好味鸡蛋仔",
-          category: "江浙小吃、小吃零食",
-          desc: "荷兰优质淡奶，奶香浓而不腻",
-          address: "上海市普陀区真北路",
-          shop: "王小虎夫妻店",
-          shopId: "10333",
-        },
       ],
+
+      dialogFormVisible: false,
+      form: {
+        name: "",
+        sex: "",
+        birthday: "",
+        address:""
+      },
+      formLabelWidth: "120px",
     };
   },
   methods: {
-        // 合并列用到的函数
+    //删除
+    handleDelete(index, data) {
+      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.$message({
+            type: "success",
+            message: "删除成功!",
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
+    },
+    //编辑
+    handleEdit(index, data) {
+      console.log(index);
+      console.log(data);
+      //this.dialogTableVisible=true
+      this.dialogFormVisible = true;
+    },
+    // 合并列用到的函数
     arraySpanMethod({ row, column, rowIndex, columnIndex }) {
       if (rowIndex >= 0) {
         if (columnIndex === 3) {
@@ -247,6 +168,39 @@ export default {
         }
       }
     },
+  },
+  mounted() {
+    //获取客户信息
+    getCustomerInfo().then(
+      (success) => {
+        //console.log(success);
+        this.tableData = success.data;
+        let date = new Date();
+        this.tableData.forEach((item, index) => {
+          //保留临时值
+          let br = item.birthday;
+          item.birthday = new Date(item.birthday).format("yyyy-MM-dd");
+          //console.log(new Date(item.birthday).format("yyyy-MM-dd"));
+          // let age = {
+          //   age: Math.floor((date.getTime() - item.birthday) / 1000 / 60 / 60 / 24 / 365),
+          // };
+          item["age"] = Math.floor(
+            (date.getTime() - new Date(br).getTime()) /
+              1000 /
+              60 /
+              60 /
+              24 /
+              365
+          );
+          //console.log(Math.floor((date.getTime() - new Date(br).getTime()) / 1000 / 60 / 60 / 24 / 365))
+          //console.log(new Date(br).getTime())
+          //console.log(date.getTime() - item.birthday)
+        });
+
+        //console.log(this.tableData)
+      },
+      (error) => {}
+    );
   },
 };
 </script>

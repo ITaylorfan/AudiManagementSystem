@@ -58,7 +58,7 @@ html , body{
     width: 100%;
     height: 100%;
     user-select: none;  /*禁止长按操作*/
-    overflow: hidden;
+    // overflow: hidden;
 	/* font-family: ;*/
 	-webkit-tap-highlight-color: transparent;   /*避免移动端点击高亮闪烁*/
 }

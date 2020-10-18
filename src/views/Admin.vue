@@ -1,4 +1,5 @@
 <template>
+<!-- 后台管理页面 -->
     <div class="admin-wrapper">
         <!-- 左侧导航栏 -->
         <div class="left-nav-wrapper">

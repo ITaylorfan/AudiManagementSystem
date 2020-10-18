@@ -3,7 +3,7 @@ const admin={
         //是否点击用户中心用户中心
         isUserInfoCenter:false,
         //是否登录
-        isLogin:true,
+        isLogin:false,
         //存放用户登录信息
         administratorsInfo:{}
     },

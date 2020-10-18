@@ -1,4 +1,5 @@
 <template>
+<!-- 管理员登录页面 -->
     <div class="login-wrapper">
         <div class="top-bar">
             <div class="left">
@@ -27,6 +28,7 @@
 <script>
 import LoginInput from "../components/LoginInput"
 import {Admin} from "../utils/mixin"
+import { getLoginStatus} from "@/api/localStorage"
 export default {
     mixins:[Admin],
     data() {
@@ -51,6 +53,12 @@ export default {
         closeLoginInput(){
             this.isLoginInput=false
         }
+    },
+
+    mounted() {
+        //赋值到vuex
+        this.setIsLogin(getLoginStatus("isLogin"))
+        //console.log(getLoginStatus("isLogin")) 
     },
 }
 </script>
