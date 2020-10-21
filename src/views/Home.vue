@@ -1,5 +1,5 @@
 <template>
-  <div class="home-wrapper">
+  <div class="home-wrapper" v-if="isChild">
     <!-- 顶部栏 -->
     <div class="top-bar">
       <div class="left">
@@ -13,24 +13,22 @@
     <div class="content-wrapper">
       <!-- 大图片 -->
       <div class="banner-wrapper" id="banner">
-        <div class="bottom-arrow">
+        <div class="bottom-arrow" @click="jump">
           <i class="el-icon-arrow-down"></i>
         </div>
       </div>
 
       <!-- 车型轮播图 -->
       <div class="scroll-wrapper">
-        <div class="title">
-          车型一览
-        </div>
-        <el-carousel :interval="4000" type="card" height="200px">
-          <el-carousel-item v-for="item in 6" :key="item">
+        <div class="title">车型一览</div>
+        <el-carousel :interval="4000" type="card" height="200px" trigger="click">
+          <el-carousel-item v-for="(item,index) in scrollData" :key="index">
             <div class="image-wrapper">
               <div class="image-title">
-                <span>Audi A3</span>
+                <span>{{item.title}}</span>
               </div>
               <div class="image-box">
-              <img src="../assets/images/A3.jpg" alt="">
+                <img :src="item.image" alt="图片加载失败" />
               </div>
             </div>
           </el-carousel-item>
@@ -43,7 +41,7 @@
           <div class="title-wrapper">
             <span>预约试驾</span>
           </div>
-          <div class="button-wrapper">
+          <div class="button-wrapper" @click="BookingDrive">
             <span>即刻预约</span>
           </div>
         </div>
@@ -51,7 +49,7 @@
           <div class="title-wrapper">
             <span>预约保养</span>
           </div>
-          <div class="button-wrapper">
+          <div class="button-wrapper" @click="BookingMaintain">
             <span>即刻预约</span>
           </div>
         </div>
@@ -59,7 +57,7 @@
           <div class="title-wrapper">
             <span>上报维修</span>
           </div>
-          <div class="button-wrapper">
+          <div class="button-wrapper" @click="SubmitRepair">
             <span>即刻上报</span>
           </div>
         </div>
@@ -79,7 +77,7 @@
           </div>
         </div>
 
-        <div class="button-wrapper">
+        <div class="button-wrapper" @click="queryPower">
           <span>立即查询</span>
         </div>
       </div>
@@ -242,9 +240,56 @@
 <script>
 export default {
   data() {
-    return {};
+    return {
+      //轮播图数据
+      scrollData: [
+        { title: "Audi A3", image: require("../assets/images/A3.jpg") },
+        { title: "Audi A4", image: require("../assets/images/A4.jpg") },
+        { title: "Audi A5", image: require("../assets/images/A5.jpg")},
+        { title: "Audi A6", image: require("../assets/images/A6l2.jpg")},
+        { title: "Audi A7", image: require("../assets/images/A7.jpg")},
+        { title: "Audi A8", image: require("../assets/images/A8.jpg")},
+        { title: "Audi Q3", image: require("../assets/images/Q3.jpg")},
+        { title: "Audi Q5", image: require("../assets/images/Q5.jpg")},
+        { title: "Audi Q7", image: require("../assets/images/Q7.jpg")},
+        { title: "Audi Q8", image: require("../assets/images/Q8.jpg")},
+      ],
+    };
   },
   methods: {
+    //查询充电桩
+    queryPower() {
+      location.href = "https://contact.audi.cn/find_chargingpile.html";
+    },
+    //预约试驾
+    BookingDrive() {
+      this.$router.push({
+        name: "BookingDrive",
+      });
+    },
+    //预约保养
+    BookingMaintain() {
+      this.$router.push({
+        name: "BookingMaintain",
+      });
+    },
+    SubmitRepair() {
+      this.$router.push({
+        name: "SubmitRepair",
+      });
+    },
+    //大图片上的跳转箭头
+    jump() {
+      let innerHeight = window.innerHeight;
+      console.log(innerHeight);
+      let timer = setInterval(() => {
+        document.documentElement.scrollTop += 50;
+        if (document.documentElement.scrollTop >= innerHeight + 1) {
+          clearInterval(timer);
+        }
+      }, 20);
+      //document.documentElement.scrollTop=innerHeight+1;
+    },
     //动态设置主页图片高度
     setBannerHeight() {
       let banner = document.getElementById("banner");
@@ -253,9 +298,22 @@ export default {
       //console.log(banner,innerHeight)
     },
   },
+  computed: {
+    isChild() {
+      if (this.$route.name === "BookingDrive") {
+        return false;
+      } else {
+        return true;
+      }
+    },
+  },
   mounted() {
     //动态设置主页图片高度
-    this.setBannerHeight();
+    if (this.$route.name !== "BookingDrive") {
+      this.setBannerHeight();
+    }
+
+    console.log(this.$route.name);
   },
 };
 </script>
@@ -332,35 +390,36 @@ export default {
 
     // 小轮播图
     .scroll-wrapper {
+      box-sizing: border-box;
       margin-top: 40px;
       flex: 0 0 250px;
       width: 100%;
+      padding: 0 10px;
       //background-color: gray;
       opacity: 1;
-      .title{
+      .title {
         color: black;
         font-size: 14px;
         margin-left: 30px;
-        //font-weight: bold;
+        font-weight: bold;
       }
-      .image-wrapper{
+      .image-wrapper {
         @include columnTopLeft;
-        .image-title{
-          flex:  0 0 30px;
+        .image-title {
+          flex: 0 0 30px;
           width: 200px;
           @include left;
           padding-left: 20px;
           color: white;
           //background-color: white;
         }
-        .image-box{
+        .image-box {
           flex: 1;
-          img{
-          width: 100%;
-          height: 170px;
+          img {
+            width: 100%;
+            height: 170px;
+          }
         }
-        }
-      
       }
       .el-carousel__item h3 {
         //color: #475669;
@@ -376,7 +435,7 @@ export default {
 
       .el-carousel__item:nth-child(2n + 1) {
         //background-color: #d3dce6;
-         background-color: #99a9bf;
+        background-color: #99a9bf;
       }
     }
     //主页功能区块
@@ -514,6 +573,10 @@ export default {
         //border:1px solid white;
         cursor: pointer;
         font-size: 20px;
+        a {
+          text-decoration: none;
+          color: black;
+        }
         &:hover {
           background-color: #b3b3b3;
         }

@@ -11,6 +11,10 @@ import { Button ,Form,FormItem, Input,Divider, MenuItem,
   CarouselItem,} from 'element-ui';
   // 导入echarts
   import echarts from 'echarts'
+  //导入百度地图
+  import BaiduMap from 'vue-baidu-map';
+  //导入第三方动画库
+  import animated from 'animate.css'
 
   //在原型中加入，方便调用
 Vue.prototype.$echarts = echarts
@@ -19,6 +23,11 @@ Vue.prototype.$message=Message
 Vue.prototype.$confirm = MessageBox.confirm;
 Vue.config.productionTip = false
 
+Vue.use(animated)
+Vue.use(BaiduMap, {
+  /* Visit http://lbsyun.baidu.com/apiconsole/key for details about app key. */
+  ak: 'pGaVGbXveybMBhW5BWb5aioaPpD6s7jT'
+})
 Vue.use(Button)
 Vue.use(Form)
 Vue.use(FormItem)

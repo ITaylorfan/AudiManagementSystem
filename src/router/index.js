@@ -10,10 +10,32 @@ const routes = [
     path: '/',
     redirect:"/Home"
   },
+  // 主页路由
   {
     path:"/Home",
     name:"Home",
-    component:()=>import("../views/Home")
+    component:()=>import("../views/Home"),
+    children:[
+    
+     
+    ]
+  },
+  //预约试驾
+  {
+    path:"/BookingDrive",
+    name:"BookingDrive",
+    component:()=>import("../components/Home/BookingDrive")
+  },
+  //预约保养
+  {
+    path:"/BookingMaintain",
+    name:"BookingMaintain",
+    component:()=>import("../components/Home/BookingMaintain")
+  },
+  {
+    path:"/SubmitRepair",
+    name:"SubmitRepair",
+    component:()=>import("../components/Home/SubmitRepair")
   },
   {
     path:"/Login",

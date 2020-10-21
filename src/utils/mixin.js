@@ -9,6 +9,9 @@ export const Admin={
         methods: {
             ...mapActions(["setIsUserInfoCenter","setIsLogin","setAdministratorsInfo"]),
 
-            
+            //重置滚动条
+            resetScrollBar(){
+                document.documentElement.scrollTop=0
+            }
         },
 }
