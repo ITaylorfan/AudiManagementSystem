@@ -5,6 +5,7 @@
     <div class="booking-drive-wrapper">
       <!-- 顶部栏 -->
       <top-bar></top-bar>
+      <right-switch></right-switch>
       <div class="page-title">
         <div class="title"><span>预约试驾</span></div>
         <div class="line"></div>
@@ -70,8 +71,9 @@
 
               <el-form-item label="手机号" prop="phone">
                 <el-input
-                  v-model="ruleForm.phone"
+                  v-model.number="ruleForm.phone"
                   placeholder="请输入手机号"
+                   maxlength="11"
                 ></el-input>
               </el-form-item>
 
@@ -84,7 +86,9 @@
             </el-form>
           </div>
           <div class="map-wrapper" id="MapContainer">
+            <div class="map-box">
             <map-show></map-show>
+            </div>
           </div>
         </div>
       </transition>
@@ -98,14 +102,33 @@ import TopBar from "../Home/TopBar";
 import BottomBar from "../Home/BottomBar";
 import MapShow from "../Home/MapShow";
 import { Admin } from "../../utils/mixin";
+import RightSwitch from "../../components/Home/RightSwitch"
 export default {
   mixins: [Admin],
   components: {
     TopBar,
     BottomBar,
     MapShow,
+    RightSwitch
   },
   data() {
+    //自定义校验
+      var checkPhone = (rule, value, callback) => {
+        if (!value) {
+          return callback(new Error('手机号不能为空'));
+        }
+        setTimeout(() => {
+          if (!Number.isInteger(value)) {
+            callback(new Error('请输入正确的手机号！'));
+          } else {
+            if (!(/^1[3|4|5|7|8][0-9]\d{4,8}$/.test(value))) {
+              callback(new Error('请输入正确的手机号！'));
+            } else {
+              callback();
+            }
+          }
+        }, 1000);
+      }
     return {
       pickerOptions: {
         disabledDate(time) {
@@ -137,7 +160,7 @@ export default {
           },
         ],
         sex: [{ required: true, message: "请选择性别", trigger: "change" }],
-        phone: [{ required: true, message: "请输入手机号", trigger: "blur" }],
+        phone: [{ validator: checkPhone, trigger: "blur"}],
       },
     };
   },
@@ -145,7 +168,11 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
+          if(!this.isUserLogin){
+            alert("先登录")
+          }
           alert("submit!");
+
         } else {
           console.log("error submit!!");
           return false;
@@ -216,11 +243,15 @@ export default {
     }
     .map-wrapper {
       flex: 1;
-      height: 85%;
+      height: 100%;
       //margin-top: -10px;
       padding: 0 30px 0 30px;
       box-sizing: border-box;
       //background-color: blueviolet;
+      .map-box{
+        padding-top: 30px;
+        height: 76%;
+      }
     }
   }
 }

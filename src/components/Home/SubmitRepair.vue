@@ -3,6 +3,7 @@
   <div class="submit-repair-wrapper">
     <!-- 顶部栏 -->
     <top-bar></top-bar>
+    <right-switch></right-switch>
     <div class="page-title">
       <div class="title"><span>维修上报</span></div>
       <div class="line"></div>
@@ -74,7 +75,9 @@
         </el-form>
       </div>
       <div class="map-wrapper" id="MapContainer">
+        <div class="map-box">
         <map-show></map-show>
+        </div>
       </div>
     </div>
 
@@ -87,12 +90,14 @@ import TopBar from "../Home/TopBar";
 import BottomBar from "../Home/BottomBar";
 import MapShow from "../Home/MapShow";
 import {Admin} from "../../utils/mixin";
+import RightSwitch from "../../components/Home/RightSwitch"
 export default {
     mixins:[Admin],
   components: {
     TopBar,
     BottomBar,
     MapShow,
+    RightSwitch
   },
   data() {
     return {
@@ -205,11 +210,15 @@ export default {
     }
     .map-wrapper {
       flex: 1;
-      height: 85%;
+      height: 100%;
       //margin-top: -10px;
       padding: 0 30px 0 30px;
       box-sizing: border-box;
       //background-color: blueviolet;
+      .map-box{
+        padding-top: 30px;
+        height: 76%;
+      }
     }
   }
 }

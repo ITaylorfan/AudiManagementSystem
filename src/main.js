@@ -8,7 +8,7 @@ import { Button ,Form,FormItem, Input,Divider, MenuItem,
   DropdownItem, Table,TableColumn, Popover, Image,  Select,
   Option, Col, DatePicker,TimePicker, Checkbox, Switch, CheckboxGroup, Radio,
   RadioGroup, Upload,Dialog,Message, MessageBox, Carousel,
-  CarouselItem,} from 'element-ui';
+  CarouselItem,Drawer} from 'element-ui';
   // 导入echarts
   import echarts from 'echarts'
   //导入百度地图
@@ -58,6 +58,7 @@ Vue.use(Upload)
 Vue.use(Dialog)
 Vue.use(Carousel)
 Vue.use(CarouselItem)
+Vue.use(Drawer)
 
 
 new Vue({

@@ -66,6 +66,7 @@ export default {
 <style lang="scss" scoped>
 @import "../assets/styles/global";
     .admin-wrapper{
+        overflow: hidden;
         box-sizing: border-box;
         width: 100%;
         height: 100%;
@@ -92,6 +93,7 @@ export default {
                 flex: 1;
                 height: 100%;
                 width: 100%;
+               
             }
         }
     }

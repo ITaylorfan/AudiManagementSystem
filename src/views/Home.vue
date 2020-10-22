@@ -1,14 +1,10 @@
 <template>
   <div class="home-wrapper" v-if="isChild">
+    <!-- 右边的抽屉 -->
+    <right-switch></right-switch>
     <!-- 顶部栏 -->
-    <div class="top-bar">
-      <div class="left">
-        <a href="/"><img src="../assets/images/一汽大众logo.png" /></a>
-      </div>
-      <div class="right">
-        <a href="/"><img src="../assets/images/奥迪logo黑色.png" /></a>
-      </div>
-    </div>
+    <top-bar></top-bar>
+
     <!-- 内容展示区 -->
     <div class="content-wrapper">
       <!-- 大图片 -->
@@ -232,13 +228,20 @@
           </div>
         </div>
       </footer>
+
     </div>
   </div>
 </template>
 
 
 <script>
+import TopBar from "../components/Home/TopBar"
+import RightSwitch from "../components/Home/RightSwitch"
 export default {
+  components:{
+    TopBar,
+    RightSwitch
+  },
   data() {
     return {
       //轮播图数据

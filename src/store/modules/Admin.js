@@ -1,11 +1,14 @@
 const admin={
     state:{
-        //是否点击用户中心用户中心
+        //是否点击管理员个人中心
         isUserInfoCenter:false,
-        //是否登录
+        //管理员是否登录
         isLogin:false,
-        //存放用户登录信息
-        administratorsInfo:{}
+        //存放管理员登录信息
+        administratorsInfo:{},
+
+        //用户登录
+        isUserLogin:false
     },
     mutations:{
         "SET_IS_USER_INFO_CENTER"(state,isUserInfoCenter){
@@ -16,6 +19,9 @@ const admin={
         },
         "SET_ADMINISTRATORS_INFO"(state,administratorsInfo){
             state.administratorsInfo=administratorsInfo
+        },
+        "SET_IS_USER_LOGIN"(state,isUserLogin){
+            state.isUserLogin=isUserLogin
         }
     }
 }
