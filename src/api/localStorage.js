@@ -22,7 +22,7 @@ export function clearLocalStorage(){
 }
 
 //下面是自定义方法
-//保存登录状态
+//保存管理员登录状态
 export function saveLoginStatus(key,value){
     //调用上面的方法
     setLocalStorage(key,value)
@@ -32,4 +32,21 @@ export function saveLoginStatus(key,value){
 export function getLoginStatus(key){
     
     return getLocalStorage(key)
+}
+
+//保存用户登录状态
+export function saveUserLoginStatus(key,value){
+    //调用上面的方法
+    setLocalStorage(key,value)
+}
+
+//获取普通用户登录状态
+export function getUserLoginStatus(key){
+    //调用上面的方法
+    return getLocalStorage(key)
+}
+
+//删除普通用户的缓存
+export function deleteUserLoginStatus(key){
+    removeLocalStorage(key)
 }

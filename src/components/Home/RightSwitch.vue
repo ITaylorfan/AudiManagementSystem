@@ -1,47 +1,202 @@
 <template>
   <div class="right-switch-wrapper">
-    <div class="content-wrapper">
-      <span>登录更精彩...</span>
-    </div>
-    <div class="arrow-wrapper" @click="drawer=true">
-      <i class="el-icon-arrow-left"></i>
-    </div>
+    <transition
+      name="backInRight"
+      appear
+      enter-active-class="animate__animated animate__backInRight"
+      leave-active-class="animate__animated  animate__backOutRight"
+    >
+      <div class="out-wrapper" v-if="!drawer">
+        <div class="content-wrapper" :class="{ changeBg: isUserLogin }">
+          <span v-show="!isUserLogin">登录更精彩...</span>
+          <span v-show="isUserLogin">欢迎登录</span>
+        </div>
+
+        <div class="arrow-wrapper" @click="drawer = true">
+          <i class="el-icon-arrow-left"></i>
+        </div>
+      </div>
+    </transition>
 
     <el-drawer
       :visible.sync="drawer"
       :direction="direction"
       :modal="false"
       style=""
+      :before-close="handleClose"
     >
-     <div class="login-wrapper">
-         <home-login-input></home-login-input>
-     </div>
+      <div class="login-wrapper">
+        <home-login-input
+          ref="loginInput"
+          v-if="!isUserLogin"
+          @getUserInfoId="getUserInfoId"
+        ></home-login-input>
+
+        <div class="user-center" v-else>
+          <div class="exitLogin" @click="exitLogin">
+            <span>注销</span>
+          </div>
+          <h2>欢迎您,{{ dataList.name }}</h2>
+
+          <el-collapse v-model="activeName" accordion>
+            <el-collapse-item name="1">
+              <template slot="title">
+                个人中心<i class="header-icon el-icon-user-solid"></i>
+              </template>
+              <!-- 内容区 -->
+              <el-card class="box-card">
+                <div class="text item">
+                  {{ "姓名：" + dataList.name }}
+                </div>
+                <div class="text item">
+                  {{ "性别：" + dataList.sex }}
+                </div>
+                <div class="text item">
+                  {{ "年龄：" + dataList.age }}
+                </div>
+                <div class="text item">
+                  {{ "生日：" + dataList.birthday }}
+                </div>
+                <div class="text item">
+                  {{ "手机：" + dataList.phone }}
+                </div>
+              </el-card>
+            </el-collapse-item>
+
+            <el-collapse-item title="反馈 Feedback" name="2">
+              <template slot="title">
+                我的通知<i class="header-icon el-icon-message-solid"></i>
+              </template>
+              <!-- 内容区 -->
+              <div class="text item">
+                {{ "手机：" + dataList.phone }}
+              </div>
+            </el-collapse-item>
+          </el-collapse>
+        </div>
+      </div>
     </el-drawer>
   </div>
 </template>
 
 <script>
+import { getUserLoginInfo } from "@/api/index.js";
 import HomeLoginInput from "../Home/HomeLoginInput";
+import { Admin } from "../../utils/mixin";
+import { getUserLoginStatus,deleteUserLoginStatus } from "@/api/localStorage";
 export default {
-    components:{
-        HomeLoginInput
-    },
-    data() {
-      return {
-        drawer: false,
-        direction: 'rtl',
-      };
-    },
-     methods: {
-      handleClose(done) {
-        this.$confirm('确认关闭？')
-          .then(_ => {
-            done();
-          })
-          .catch(_ => {});
-      }
-    }
+  mixins: [Admin],
+  components: {
+    HomeLoginInput,
+  },
+  data() {
+    return {
+      dataList: {},
+      drawer: false,
+      direction: "rtl",
+      activeName: "0",
+    };
+  },
+  //   computed: {
+  //   getStoreItem () {
+  //     return this.isUserLogin
+  //   }
+  // },
+  // watch: {
+  //   getStoreItem (v) {
+  //     console.log("adada")
+  //     console.log(v)
+  //   }
+  // },
+  // watch: {
+  //   isUserLogin: function (v) {
+  //     console.log(v);
+  //     if(v){
+  //       console.log(this)
+  //     }
+  //   },
+  // },
+  methods: {
+    //注销
+    exitLogin() {
+      setTimeout(() => {
+        this.$message({
+          message: "注销成功！",
+          type: "success",
+        });
+      }, 1000);
+      //归位
+      this.setIsUserLogin(false)
+      deleteUserLoginStatus("isUserLogin")
+      this.drawer=false
 
+      //加载中动画
+      let loadingInstance = this.$Loading.service({
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)",
+      });
+      setTimeout(() => {
+        loadingInstance.close();
+      }, 1000);
+    },
+
+    //根据id获取用户信息
+    getUserInfoId(v) {
+      //封装
+      let data = {
+        userInfoId: v,
+      };
+      getUserLoginInfo(data).then(
+        (success) => {
+          //console.log(success)
+          //取值存值
+          if (success) {
+            this.$message({
+              message: "欢迎登录！",
+              type: "success",
+            });
+            this.dataList = success.data[0];
+            //把数据库中的date类型进行转换
+            this.dataList.birthday = new Date(this.dataList.birthday).format(
+              "yyyy-MM-dd"
+            );
+          }
+        },
+        (error) => {
+          console.log(error);
+          if (error) {
+            this.$message.error("服务器错误！");
+          }
+        }
+      );
+    },
+    handleClose(done) {
+      // this.$confirm('确认关闭？')
+      //   .then(_ => {
+      //     done();
+      //   })
+      //   .catch(_ => {});
+      if (!this.isUserLogin) {
+        this.$refs.loginInput.resetForm("ruleForm");
+      }
+
+      done();
+    },
+  },
+  mounted() {
+    //先从localStorage中取值
+    // console.log(getUserLoginStatus("isUserLogin"))
+    let LoginStatus = getUserLoginStatus("isUserLogin");
+    //如果不为空就可以跳过登录
+    if (LoginStatus) {
+      //设置登录状态
+      this.setIsUserLogin(LoginStatus.isUserLogin);
+      //获取用户信息id
+      this.getUserInfoId(LoginStatus.userInfoId);
+    }
+  },
 };
 </script>
 
@@ -53,42 +208,81 @@ export default {
   height: 50%;
   right: 0;
   top: 25%;
-  background-color: rgb(255, 255, 255);
+  //background-color: rgb(255, 255, 255);
   z-index: 9000;
   border-radius: 10px 0 0 10px;
   //overflow: hidden;
-  cursor: pointer;
+  // cursor: pointer;
   outline: none;
-  @include columnTopLeft;
-  .content-wrapper {
-    flex: 1;
-    width: 100%;
-    //background-color: blanchedalmond;
-    @include center;
-    background-image: url("../../assets/images/A3.jpg");
-    span {
-      color: white;
-      font-size: 20px;
-      letter-spacing: 5px; //设置字与字的间距
-      writing-mode: vertical-lr; //垂直方向，从左向右
+  .out-wrapper {
+    width: 50px;
+    height: 100%;
+    @include columnTopLeft;
+    .content-wrapper {
+      flex: 1;
+      width: 100%;
+      //background-color: blanchedalmond;
+      @include center;
+      cursor: default;
+      background-image: url("../../assets/images/A3.jpg");
+      span {
+        color: white;
+        font-size: 20px;
+        letter-spacing: 5px; //设置字与字的间距
+        writing-mode: vertical-lr; //垂直方向，从左向右
+      }
+      &.changeBg {
+        background-image: url("../../assets/images/RSBBanner.jpg");
+      }
     }
-  }
-  .arrow-wrapper {
-    flex: 0 0 50px;
-    width: 100%;
-    background-color: rgb(221, 221, 221);
-    border-radius: 0 0 0 10px;
-    @include center;
-    i {
-      font-size: 30px;
-      font-weight: bold;
+    .arrow-wrapper {
+      flex: 0 0 50px;
+      width: 100%;
+      //background-color: rgb(221, 221, 221);
+      background-color: white;
+      border-radius: 0 0 0 10px;
+      border: 1px solid #c7c7c7;
+      cursor: pointer;
+      @include center;
+      i {
+        font-size: 30px;
+        font-weight: bold;
+      }
+      &:hover {
+        background-color: #d1cdc9;
+      }
     }
   }
 
-  .login-wrapper{
-      width: 100%;
-      height: 100%;
-      //background-color: yellow;
+  .login-wrapper {
+    width: 100%;
+    height: 100%;
+    //background-color: #6666;
+    cursor: default;
+    .user-center {
+      padding-left: 10px;
+      .exitLogin {
+        position: absolute;
+        width: 40px;
+        height: 30px;
+        top: 17px;
+        left: 5px;
+        line-height: 30px;
+        text-align: center;
+        color: red;
+        font-size: 14px;
+        cursor: pointer;
+      }
+    }
+  }
+}
+</style>
+
+<style lang="scss">
+.el-collapse-item__header {
+  font-size: 16px;
+  .header-icon {
+    font-size: 20px;
   }
 }
 </style>

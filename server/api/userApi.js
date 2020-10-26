@@ -52,7 +52,7 @@ router.get("/getInfo",(request,response)=>{
     })
 }) 
 
-//登录账户密码检验
+//管理员登录账户密码检验
 router.post('/loginCheck', (req, res) => {  
 
     var params = req.body;
@@ -72,7 +72,7 @@ router.post('/loginCheck', (req, res) => {
     })
 });
 
-//用户注册
+//管理员用户注册
 router.post('/register',(req,res)=>{
     var params=req.body;
     var sql=`insert into login values(null,'${params.username}','${params.password}')`;
@@ -90,7 +90,7 @@ router.post('/register',(req,res)=>{
 
 })
 
-//获取登录用户信息
+//获取管理员登录用户信息
 router.post('/administratorsInfo',(req,res)=>{
     var params=req.body;
     console.log(params)
@@ -146,5 +146,42 @@ router.get('/customerInfo',(req,res)=>{
 
 })
 
-//获取
+//普通登录账户密码检验
+router.post('/userLoginCheck', (req, res) => {  
+
+    var params = req.body;
+    var sql = `select * from user_login where username='${params.username}' and password='${params.password}'`
+    console.log(params);
+    conn.query(sql,function(err, result) {
+        if (err) {
+            console.log(err);
+            jsonWrite(res, err);
+        }
+        if (result) {
+            //返回结果
+            jsonWrite(res, result);
+            console.log(result)
+            //res.send(result)
+        }
+    })
+});
+
+//获取普通登录用户信息
+router.post('/userInfo',(req,res)=>{
+    var params=req.body;
+    console.log(params)
+    var sql=`select * from user_login_info where userInfoId=${params.userInfoId}`;
+    conn.query(sql,function(error,result){
+        if(error){
+            console.log(error);
+            jsonWrite(res, error);
+        }
+        if(result){
+            //返回结果
+            jsonWrite(res, result);
+            console.log(result)
+        }
+    })
+
+})
 module.exports = router;

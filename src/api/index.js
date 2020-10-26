@@ -1,5 +1,5 @@
 import axios from "axios"
- //登录验证校验     
+ //管理员登录验证校验     
 export function loginCheck(loginInfo) {
     return axios({
         method: 'post',
@@ -40,6 +40,23 @@ export function getCustomerInfo(){
   })
 }
 
+//普通用户登录
+export function userLoginCheck(loginInfo) {
+  return axios({
+      method: 'post',
+      url: `api/user/userLoginCheck`,
+      data: loginInfo
+    })
+}
+
+//获取普通用户信息
+export function getUserLoginInfo(userInfoId){
+  return axios({
+    method:"post",
+    url:`api/user/userInfo`,
+    data:userInfoId
+  })
+}
 
 
 //Date对象原型方法扩展

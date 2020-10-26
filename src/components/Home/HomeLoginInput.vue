@@ -35,6 +35,19 @@
             <!-- show-password 显示密码-->
           </el-form-item>
 
+          <el-form-item label="验证码" prop="inputCheckCode">
+           <el-col :span="14">
+           <el-input
+              type="text"
+              v-model="ruleForm.inputCheckCode"
+              autocomplete="off"
+              
+            ></el-input>
+            </el-col>
+            <!-- 验证码 -->
+                <identify-box @getCheckCode="getCheckCode" ref="identifyBox"></identify-box>
+          </el-form-item>
+
           <el-form-item class="button-center">
             <el-button type="primary" @click="submitForm('ruleForm')"
               >提交</el-button
@@ -55,11 +68,14 @@
 
 <script>
 import { Admin } from "../../utils/mixin";
-import { loginCheck } from "@/api/index.js";
-import {saveLoginStatus} from "@/api/localStorage"
+import {  userLoginCheck } from "@/api/index.js";
+import {saveUserLoginStatus} from "@/api/localStorage"
+import IdentifyBox from "@/components/Home/IdentifyBox"
 export default {
   mixins: [Admin],
-
+  components:{
+    IdentifyBox
+  },
   data() {
     var validateUserName = (rule, value, callback) => {
       if (value === "") {
@@ -80,12 +96,28 @@ export default {
         callback();
       }
     };
+       var validateInputCheckCode = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请输入验证码"));
+      } else if (value !== this.ruleForm.checkCode) {
+        
+        callback(new Error("验证码错误!"));
+        
+        //console.log(typeof value)
+      } else {
+        callback();
+      }
+    };
     return {
       //判断是否允许登录
       allowLogin: false,
       ruleForm: {
         userName: "",
         pass: "",
+        //获取生成的验证码
+        checkCode:"",
+        //用户输入的验证码
+        inputCheckCode:""
       },
       rules: {
         userName: [
@@ -107,10 +139,18 @@ export default {
             trigger: "blur",
           },
         ],
+        inputCheckCode:[
+          { validator: validateInputCheckCode, trigger: "blur" },
+        ]
       },
     };
   },
   methods: {
+    //获取验证码
+    getCheckCode(v){
+      this.ruleForm.checkCode=v
+      console.log(this.ruleForm.checkCode)
+    },
     register(){
       console.log("1")
       this.$router.push("Register")
@@ -137,35 +177,46 @@ export default {
           //console.log(loginInfo);
 
           //登录验证接口 传入参数
-          loginCheck(loginInfo).then(res => {
+          userLoginCheck(loginInfo).then(res => {
             //打印响应结果
             //console.log(res.data);
             if (res.data.length > 0) {
               //登录成功
-              this.$message({
-                message: "欢迎登录系统！",
-                type: "success",
-              });
+              // this.$message({
+              //   message: "欢迎登录！",
+              //   type: "success",
+              // });
               //已登录
-              this.setIsLogin("true")
-              //保存登录状态到localStorage
-              saveLoginStatus("isLogin",this.isLogin)
+              this.setIsUserLogin("true")
+            
+              this.$emit("getUserInfoId",res.data[0].userInfoId)
 
-              setTimeout(()=>{
-                this.$router.push("Admin");
-              },1000)
+              let  saveLocalData={
+                userInfoId:res.data[0].userInfoId,
+                isUserLogin:this.isUserLogin
+              }
+              //保存用户登录状态到localStorage
+              saveUserLoginStatus("isUserLogin",saveLocalData)
+
+              // setTimeout(()=>{
+              //   this.$router.push("Admin");
+              // },1000)
               
             } else if(res.data.length ===0) {
               //登录失败
               this.$message.error("账号或密码错误！")
               //清空密码
               this.ruleForm.pass=""
+               //更改验证码  
+              this.$refs.identifyBox.changeCode();   
             }
           },error=>{
             this.$message.error("服务器出错了！")
             console.log("服务器出错了",error)
           });
         } else {
+          //更改验证码  
+          this.$refs.identifyBox.changeCode();   
           console.log("error submit!!");
           return false;
         }

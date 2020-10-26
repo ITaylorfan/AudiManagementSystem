@@ -9,6 +9,7 @@ const admin={
 
         //用户登录
         isUserLogin:false
+
     },
     mutations:{
         "SET_IS_USER_INFO_CENTER"(state,isUserInfoCenter){

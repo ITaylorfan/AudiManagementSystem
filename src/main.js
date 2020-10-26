@@ -8,19 +8,25 @@ import { Button ,Form,FormItem, Input,Divider, MenuItem,
   DropdownItem, Table,TableColumn, Popover, Image,  Select,
   Option, Col, DatePicker,TimePicker, Checkbox, Switch, CheckboxGroup, Radio,
   RadioGroup, Upload,Dialog,Message, MessageBox, Carousel,
-  CarouselItem,Drawer} from 'element-ui';
+  CarouselItem,Drawer, Collapse,
+  CollapseItem, Card,Loading} from 'element-ui';
   // 导入echarts
   import echarts from 'echarts'
   //导入百度地图
   import BaiduMap from 'vue-baidu-map';
   //导入第三方动画库
   import animated from 'animate.css'
+  //导入md5加密
+  import md5 from 'js-md5';
 
   //在原型中加入，方便调用
 Vue.prototype.$echarts = echarts
 Vue.prototype.$axios=axios
 Vue.prototype.$message=Message
 Vue.prototype.$confirm = MessageBox.confirm;
+Vue.prototype.$Loading=Loading
+Vue.prototype.$md5=md5
+
 Vue.config.productionTip = false
 
 Vue.use(animated)
@@ -59,6 +65,9 @@ Vue.use(Dialog)
 Vue.use(Carousel)
 Vue.use(CarouselItem)
 Vue.use(Drawer)
+Vue.use(Collapse)
+Vue.use(CollapseItem)
+Vue.use(Card)
 
 
 new Vue({
