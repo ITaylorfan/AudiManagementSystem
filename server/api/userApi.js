@@ -184,4 +184,41 @@ router.post('/userInfo',(req,res)=>{
     })
 
 })
+//获取普通登录通知信息
+router.post('/userNotice',(req,res)=>{
+    var params=req.body;
+    console.log(params)
+    var sql=`select content,createTime from user_notice where userInfoId=${params.userInfoId}`;
+    conn.query(sql,function(error,result){
+        if(error){
+            console.log(error);
+            jsonWrite(res, error);
+        }
+        if(result){
+            //返回结果
+            jsonWrite(res, result);
+            console.log(result)
+        }
+    })
+
+})
+//普通用户提交信息
+router.post('/userSubmit',(req,res)=>{
+    var params=req.body;
+    console.log(params)
+    var sql=`INSERT INTO user_submit(userInfoId,carId,bookingTime,phone,NAME,sex,bookingType) 
+    VALUE(${params.userInfoId},${params.carType},'${params.bookingTime}',${params.phone},'${params.name}','${params.sex}','${params.bookingType}')`;
+    conn.query(sql,function(error,result){
+        if(error){
+            console.log(error);
+            jsonWrite(res, error);
+        }
+        if(result){
+            //返回结果
+            jsonWrite(res, result);
+            console.log(result)
+        }
+    })
+
+})
 module.exports = router;

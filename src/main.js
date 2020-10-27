@@ -9,7 +9,7 @@ import { Button ,Form,FormItem, Input,Divider, MenuItem,
   Option, Col, DatePicker,TimePicker, Checkbox, Switch, CheckboxGroup, Radio,
   RadioGroup, Upload,Dialog,Message, MessageBox, Carousel,
   CarouselItem,Drawer, Collapse,
-  CollapseItem, Card,Loading} from 'element-ui';
+  CollapseItem, Card,Loading,Badge} from 'element-ui';
   // 导入echarts
   import echarts from 'echarts'
   //导入百度地图
@@ -68,6 +68,7 @@ Vue.use(Drawer)
 Vue.use(Collapse)
 Vue.use(CollapseItem)
 Vue.use(Card)
+Vue.use(Badge)
 
 
 new Vue({

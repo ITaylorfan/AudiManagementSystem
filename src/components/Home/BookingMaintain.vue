@@ -3,7 +3,7 @@
   <div class="booking-maintain-wrapper">
     <!-- 顶部栏 -->
     <top-bar></top-bar>
-    <right-switch></right-switch>
+    <right-switch @getUserLoginInfo="getUserLoginInfo"></right-switch>
     <div class="page-title">
       <div class="title"><span>预约保养</span></div>
       <div class="line"></div>
@@ -19,17 +19,20 @@
           class="demo-ruleForm"
         >
           <el-form-item label="保养车型" prop="carType" required>
-            <el-select v-model="ruleForm.carType" placeholder="请选择要保养的车型">
-              <el-option label="A3" value="A3"></el-option>
-              <el-option label="A4" value="A4"></el-option>
-              <el-option label="A5" value="A5"></el-option>
-              <el-option label="A6" value="A6"></el-option>
-              <el-option label="A7" value="A7"></el-option>
-              <el-option label="A8" value="A8"></el-option>
-              <el-option label="Q3" value="Q3"></el-option>
-              <el-option label="Q5" value="Q5"></el-option>
-              <el-option label="Q7" value="Q7"></el-option>
-              <el-option label="Q8" value="Q8"></el-option>
+            <el-select
+              v-model="ruleForm.carType"
+              placeholder="请选择要保养的车型"
+            >
+              <el-option label="A3" value="1"></el-option>
+              <el-option label="A4" value="2"></el-option>
+              <el-option label="A5" value="3"></el-option>
+              <el-option label="A6" value="4"></el-option>
+              <el-option label="A7" value="5"></el-option>
+              <el-option label="A8" value="6"></el-option>
+              <el-option label="Q3" value="7"></el-option>
+              <el-option label="Q5" value="8"></el-option>
+              <el-option label="Q7" value="9"></el-option>
+              <el-option label="Q8" value="10"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="预约时间" required>
@@ -76,7 +79,7 @@
       </div>
       <div class="map-wrapper" id="MapContainer">
         <div class="map-box">
-        <map-show></map-show>
+          <map-show></map-show>
         </div>
       </div>
     </div>
@@ -89,24 +92,43 @@
 import TopBar from "../Home/TopBar";
 import BottomBar from "../Home/BottomBar";
 import MapShow from "../Home/MapShow";
-import {Admin} from "../../utils/mixin";
-import RightSwitch from "../../components/Home/RightSwitch"
+import { Admin } from "../../utils/mixin";
+import RightSwitch from "../../components/Home/RightSwitch";
+import { userSubmit } from "@/api/index";
 export default {
-    mixins:[Admin],
+  mixins: [Admin],
   components: {
     TopBar,
     BottomBar,
     MapShow,
-    RightSwitch
+    RightSwitch,
   },
   data() {
+    //自定义校验
+    var checkPhone = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error("手机号不能为空"));
+      }
+      setTimeout(() => {
+        if (!Number.isInteger(value)) {
+          callback(new Error("请输入正确的手机号！"));
+        } else {
+          if (!/^1[3|4|5|7|8][0-9]\d{4,8}$/.test(value)) {
+            callback(new Error("请输入正确的手机号！"));
+          } else {
+            callback();
+          }
+        }
+      }, 1000);
+    };
+
     return {
       pickerOptions: {
         disabledDate(time) {
           //此条为设置禁止用户选择今天之前的日期，包含今天。
           // return time.getTime() <= (Date.now()-(24 * 60 * 60 * 1000));
           //此条为设置禁止用户选择今天之前的日期，不包含今天。
-          return time.getTime() <= Date.now() - 24 * 60 * 60 * 1000;
+          return time.getTime() <= Date.now();
         },
       },
       ruleForm: {
@@ -119,7 +141,7 @@ export default {
       rules: {
         name: [
           { required: true, message: "请输入姓名", trigger: "blur" },
-          { min: 3, max: 5, message: "最少输入两个字符", trigger: "blur" },
+          { min: 2, max: 5, message: "最少输入两个字符", trigger: "blur" },
         ],
         carType: [{ required: true, message: "请选择车型", trigger: "change" }],
         date1: [
@@ -131,17 +153,55 @@ export default {
           },
         ],
         sex: [{ required: true, message: "请选择性别", trigger: "change" }],
-        phone: [{ required: true, message: "请输入手机号", trigger: "blur" }],
+        phone: [{ validator: checkPhone, trigger: "blur" }],
       },
     };
   },
   methods: {
+    //将用户信息中的姓名和手机号填入表单 并获取用户信息id
+    getUserLoginInfo(v) {
+      //console.log(v)
+      this.ruleForm.name = v.name;
+      this.ruleForm.phone = v.phone;
+      this.userInfoId = v.userInfoId;
+    },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert("submit!");
+          if (!this.isUserLogin) {
+            this.$message.error("请先登录！");
+          } else {
+            //alert("submit!");
+            //console.log(new Date(this.ruleForm.date1).format("yyyy-MM-dd"))
+            let data = {
+              carType: this.ruleForm.carType,
+              bookingTime: new Date(this.ruleForm.date1).format("yyyy-MM-dd"),
+              name: this.ruleForm.name,
+              sex: this.ruleForm.sex,
+              phone: this.ruleForm.phone,
+              userInfoId: this.userInfoId,
+              bookingType: "预约保养",
+            };
+            userSubmit(data).then(
+              (success) => {
+                console.log(success);
+                this.$message({
+                  message: "提交成功！",
+                  type: "success",
+                });
+                setTimeout(() => {
+                  this.$router.go(-1);
+                }, 2000);
+              },
+              (error) => {
+                console.log(error);
+                this.$message.error("提交失败！");
+              }
+            );
+            //console.error(data)
+          }
         } else {
-          console.log("error submit!!");
+          //console.log("error submit!!");
           return false;
         }
       });
@@ -159,7 +219,7 @@ export default {
   },
   mounted() {
     //console.log("adadada")
-    this.resetScrollBar()
+    this.resetScrollBar();
   },
 };
 </script>
@@ -215,7 +275,7 @@ export default {
       padding: 0 30px 0 30px;
       box-sizing: border-box;
       //background-color: blueviolet;
-        .map-box{
+      .map-box {
         padding-top: 30px;
         height: 76%;
       }

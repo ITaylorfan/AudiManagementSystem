@@ -183,7 +183,7 @@ export default {
             if (res.data.length > 0) {
               //登录成功
               // this.$message({
-              //   message: "欢迎登录！",
+              //   message: "欢迎登录！",2
               //   type: "success",
               // });
               //已登录

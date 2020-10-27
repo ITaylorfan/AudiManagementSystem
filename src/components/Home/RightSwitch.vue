@@ -65,11 +65,23 @@
 
             <el-collapse-item title="反馈 Feedback" name="2">
               <template slot="title">
-                我的通知<i class="header-icon el-icon-message-solid"></i>
+                <!-- 统计个数的小红点 -->
+                <el-badge :value="noticeList.length" class="item">
+                  我的通知<i class="header-icon el-icon-message-solid"></i>
+                </el-badge>
               </template>
               <!-- 内容区 -->
-              <div class="text item">
-                {{ "手机：" + dataList.phone }}
+              <div v-if="noticeList.length !== 0">
+                <div
+                  class="text item"
+                  v-for="(item, index) in noticeList"
+                  :key="index"
+                >
+                  {{ index + 1 + ".  " + item.content + item.createTime }}
+                </div>
+              </div>
+              <div v-else>
+                <div class="text item">暂无通知</div>
               </div>
             </el-collapse-item>
           </el-collapse>
@@ -80,10 +92,10 @@
 </template>
 
 <script>
-import { getUserLoginInfo } from "@/api/index.js";
+import { getUserLoginInfo, getUserNotice } from "@/api/index.js";
 import HomeLoginInput from "../Home/HomeLoginInput";
 import { Admin } from "../../utils/mixin";
-import { getUserLoginStatus,deleteUserLoginStatus } from "@/api/localStorage";
+import { getUserLoginStatus, deleteUserLoginStatus } from "@/api/localStorage";
 export default {
   mixins: [Admin],
   components: {
@@ -95,6 +107,7 @@ export default {
       drawer: false,
       direction: "rtl",
       activeName: "0",
+      noticeList: [],
     };
   },
   //   computed: {
@@ -116,6 +129,9 @@ export default {
   //     }
   //   },
   // },
+  computed: {
+    redPoint() {},
+  },
   methods: {
     //注销
     exitLogin() {
@@ -126,9 +142,9 @@ export default {
         });
       }, 1000);
       //归位
-      this.setIsUserLogin(false)
-      deleteUserLoginStatus("isUserLogin")
-      this.drawer=false
+      this.setIsUserLogin(false);
+      deleteUserLoginStatus("isUserLogin");
+      this.drawer = false;
 
       //加载中动画
       let loadingInstance = this.$Loading.service({
@@ -153,15 +169,15 @@ export default {
           //console.log(success)
           //取值存值
           if (success) {
-            this.$message({
-              message: "欢迎登录！",
-              type: "success",
-            });
             this.dataList = success.data[0];
             //把数据库中的date类型进行转换
             this.dataList.birthday = new Date(this.dataList.birthday).format(
               "yyyy-MM-dd"
             );
+
+            let getInfoToParent = this.dataList;
+            getInfoToParent["userInfoId"] = v;
+            this.$emit("getUserLoginInfo", getInfoToParent);
           }
         },
         (error) => {
@@ -169,6 +185,19 @@ export default {
           if (error) {
             this.$message.error("服务器错误！");
           }
+        }
+      );
+      //获取用户通知信息
+      getUserNotice(data).then(
+        (success) => {
+          //console.log(success);
+          this.noticeList = success.data;
+          this.noticeList.forEach((item, index) => {
+            item.createTime = new Date(item.createTime).format("yyyy-MM-dd");
+          });
+        },
+        (error) => {
+          this.$message.error("获取通知信息错误！");
         }
       );
     },
@@ -191,6 +220,13 @@ export default {
     let LoginStatus = getUserLoginStatus("isUserLogin");
     //如果不为空就可以跳过登录
     if (LoginStatus) {
+      if (this.isFirstLogin) {
+        this.$message({
+          message: "欢迎登录！",
+          type: "success",
+        });
+        this.setIsFirstLogin(false)
+      }
       //设置登录状态
       this.setIsUserLogin(LoginStatus.isUserLogin);
       //获取用户信息id
@@ -279,10 +315,16 @@ export default {
 </style>
 
 <style lang="scss">
+// 重置elementui 样式
 .el-collapse-item__header {
   font-size: 16px;
   .header-icon {
     font-size: 20px;
+  }
+}
+.el-badge__content {
+  &.is-fixed {
+    top: 11px;
   }
 }
 </style>

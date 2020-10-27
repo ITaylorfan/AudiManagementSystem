@@ -57,6 +57,23 @@ export function getUserLoginInfo(userInfoId){
     data:userInfoId
   })
 }
+//获取普通用户通知信息
+export function getUserNotice(userInfoId){
+  return axios({
+    method:"post",
+    url:`api/user/userNotice`,
+    data:userInfoId
+  })
+}
+
+//用户提交的信息
+export function userSubmit(submitInfo){
+  return axios({
+    method:"post",
+    url:`api/user/userSubmit`,
+    data:submitInfo
+  })
+}
 
 
 //Date对象原型方法扩展

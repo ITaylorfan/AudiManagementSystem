@@ -11,6 +11,9 @@ const actions={
     //设置用户是否登录
     setIsUserLogin({commit},isUserLogin){
         return commit("SET_IS_USER_LOGIN",isUserLogin)
+    },
+    setIsFirstLogin({commit},isFirstLogin){
+        return commit("SET_IS_FIRST_LOGIN",isFirstLogin)
     }
 }
 

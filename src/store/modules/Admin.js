@@ -8,7 +8,10 @@ const admin={
         administratorsInfo:{},
 
         //用户登录
-        isUserLogin:false
+        isUserLogin:false,
+
+        //控制登录提示只显示一次
+        isFirstLogin:true,
 
     },
     mutations:{
@@ -23,6 +26,9 @@ const admin={
         },
         "SET_IS_USER_LOGIN"(state,isUserLogin){
             state.isUserLogin=isUserLogin
+        },
+        "SET_IS_FIRST_LOGIN"(state,isFirstLogin){
+            state.isFirstLogin=isFirstLogin
         }
     }
 }
