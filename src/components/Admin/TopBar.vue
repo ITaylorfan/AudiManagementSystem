@@ -94,7 +94,7 @@ export default {
         //console.log(command)
         switch(command){
           case "a":
-            this.$emit("dropdownMenu","4")
+            this.$emit("dropdownMenu","6")
             break
           case "b":
             //退出登录

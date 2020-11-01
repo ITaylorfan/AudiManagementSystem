@@ -75,6 +75,56 @@ export function userSubmit(submitInfo){
   })
 }
 
+//后台获取所有已注册普通用户信息
+export function getAllUserInfo(){
+  return axios({
+    method:"get",
+    url:`api/user/getAllUserInfo`,
+    
+  })
+}
+
+//后台获取所有普通用户预约的信息
+export function getAllUserBookingInfo(){
+  return axios({
+    method:"get",
+    url:`api/user/getAllUserBookingInfo`,
+    
+  })
+}
+
+//后台获取销售信息
+export function getAllSellInfo(){
+  return axios({
+    method:"get",
+    url:`api/user/getAllSellInfo`,
+
+  })
+}
+
+export function saveCustomerInfo(customerInfo){
+  return axios({
+    method:"post",
+    url:`api/user/saveCustomerInfo`,
+    data:customerInfo
+  })
+}
+
+export function deleteCustomerInfo(customerId){
+  return axios({
+    method:"post",
+    url:`api/user/deleteCustomerInfo`,
+    data:customerId
+  })
+}
+//添加信息
+export function addCustomerInfo(customerInfo){
+  return axios({
+    method:"post",
+    url:`api/user/addCustomerInfo`,
+    data:customerInfo
+  })
+}
 
 //Date对象原型方法扩展
 Date.prototype.format = function (fmt) {

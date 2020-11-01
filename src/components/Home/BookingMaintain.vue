@@ -184,12 +184,23 @@ export default {
             };
             userSubmit(data).then(
               (success) => {
-                console.log(success);
-                this.$message({
-                  message: "提交成功！",
-                  type: "success",
+                // console.log(success);
+                   setTimeout(() => {
+                  this.$message({
+                    message: "提交成功！",
+                    type: "success",
+                  });
+                }, 2000);
+                  //加载中动画
+                let loadingInstance = this.$Loading.service({
+                  lock: true,
+                  text: "Loading",
+                  spinner: "el-icon-loading",
+                  background: "rgba(0, 0, 0, 0.7)",
                 });
+          
                 setTimeout(() => {
+                  loadingInstance.close();
                   this.$router.go(-1);
                 }, 2000);
               },

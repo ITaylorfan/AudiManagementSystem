@@ -37,13 +37,21 @@
       </el-menu-item>
       <el-menu-item index="2">
         <i class="el-icon-s-custom"></i>
-        <span slot="title">客户</span>
+        <span slot="title">客户信息</span>
       </el-menu-item>
       <el-menu-item index="3">
         <i class="el-icon-coin"></i>
-        <span slot="title">销售</span>
+        <span slot="title">销售信息</span>
       </el-menu-item>
-      <el-menu-item index="4">
+          <el-menu-item index="4">
+        <i class="el-icon-user-solid"></i>
+        <span slot="title">已注册用户管理</span>
+      </el-menu-item>
+         <el-menu-item index="5">
+        <i class="el-icon-user"></i>
+        <span slot="title">用户预约信息管理</span>
+      </el-menu-item>
+      <el-menu-item index="6">
         <i class="el-icon-setting"></i>
         <span slot="title">个人中心</span>
       </el-menu-item>
@@ -58,7 +66,7 @@ export default {
       AdminClick(index){
         //console.log(index)
         //console.log(this.$refs.elMenu.activeIndex)
-        this.$refs.elMenu.activeIndex="4"
+        this.$refs.elMenu.activeIndex=index
       },
       //菜单点击触发回调 获取上面的index值
       selectClick(index){
@@ -73,6 +81,7 @@ export default {
         console.log(key, keyPath);
       }
     },
+
 }
 </script>
 

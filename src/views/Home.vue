@@ -370,7 +370,7 @@ export default {
     .banner-wrapper {
       width: 100%;
       flex: 0 0 681px;
-      background-image: url("../assets/images/RSBBanner.jpg");
+      background-image: url("../assets/images/双十一_1920x1080.jpg");
       background-size: cover;
       @include columnBottom;
       .bottom-arrow {

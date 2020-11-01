@@ -174,7 +174,15 @@ export default {
             this.dataList.birthday = new Date(this.dataList.birthday).format(
               "yyyy-MM-dd"
             );
-
+            //成功获取到信息后 通知消息
+            if (this.isFirstLogin) {
+              this.$message({
+                message: "欢迎登录！",
+                type: "success",
+              });
+              this.setIsFirstLogin(false);
+            }
+            //给父组件传值
             let getInfoToParent = this.dataList;
             getInfoToParent["userInfoId"] = v;
             this.$emit("getUserLoginInfo", getInfoToParent);
@@ -184,6 +192,7 @@ export default {
           console.log(error);
           if (error) {
             this.$message.error("服务器错误！");
+            this.setIsUserLogin(false);
           }
         }
       );
@@ -220,13 +229,6 @@ export default {
     let LoginStatus = getUserLoginStatus("isUserLogin");
     //如果不为空就可以跳过登录
     if (LoginStatus) {
-      if (this.isFirstLogin) {
-        this.$message({
-          message: "欢迎登录！",
-          type: "success",
-        });
-        this.setIsFirstLogin(false)
-      }
       //设置登录状态
       this.setIsUserLogin(LoginStatus.isUserLogin);
       //获取用户信息id

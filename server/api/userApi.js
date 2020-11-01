@@ -140,7 +140,7 @@ router.get('/customerInfo',(req,res)=>{
         if(result){
             //返回结果
             jsonWrite(res, result);
-            console.log(result)
+            //console.log(result)
         }
     })
 
@@ -221,4 +221,118 @@ router.post('/userSubmit',(req,res)=>{
     })
 
 })
+
+//后台所有获取已注册用户信息
+router.get('/getAllUserInfo',(req,res)=>{
+    var sql=`select * from user_login_info`;
+    conn.query(sql,function(error,result){
+        if(error){
+            console.log(error);
+            jsonWrite(res, error);
+        }
+        if(result){
+            //返回结果
+            jsonWrite(res, result);
+            console.log(result)
+        }
+    })
+
+})
+
+//后台获取所有用户预约信息
+router.get('/getAllUserBookingInfo',(req,res)=>{
+    var sql=`select * from user_submit`;
+    conn.query(sql,function(error,result){
+        if(error){
+            console.log(error);
+            jsonWrite(res, error);
+        }
+        if(result){
+            //返回结果
+            jsonWrite(res, result);
+            console.log(result)
+        }
+    })
+
+})
+
+//后台获取所有销售信息
+router.get('/getAllSellInfo',(req,res)=>{
+    var sql=`select * from select_order`;
+    conn.query(sql,function(error,result){
+        if(error){
+            console.log(error);
+            jsonWrite(res, error);
+        }
+        if(result){
+            //返回结果
+            jsonWrite(res, result);
+            console.log(result)
+        }
+    })
+
+})
+
+//保存客户信息
+router.post('/saveCustomerInfo',(req,res)=>{
+    var params=req.body;
+    console.log(params)
+    var sql=`UPDATE customerinfo SET name='${params.name}',sex='${params.sex}',phone=${params.phone},address='${params.address}',birthday='${params.birthday}' 
+    WHERE customerId=${params.customerId}`;
+    conn.query(sql,function(error,result){
+        if(error){
+            console.log(error);
+            jsonWrite(res, error);
+        }
+        if(result){
+            //返回结果
+            jsonWrite(res, result);
+            console.log(result)
+        }
+    })
+
+})
+
+//删除客户信息
+router.post('/deleteCustomerInfo',(req,res)=>{
+    var params=req.body;
+    console.log(params)
+    var sql=`DELETE FROM customerinfo WHERE customerId=${params.customerId};`;
+    var sql2=`ALTER TABLE customerinfo AUTO_INCREMENT=1;`
+    conn.query(sql,function(error,result){
+        if(error){
+            console.log(error);
+            jsonWrite(res, error);
+        }
+        if(result){
+            //返回结果
+            jsonWrite(res, result);
+            console.log(result,"addad")
+            console.log("删除成功")
+        }
+    })
+    conn.query(sql2)
+});
+
+//添加客户信息
+router.post('/addCustomerInfo',(req,res)=>{
+    var params=req.body;
+    console.log(params)
+    var sql=`INSERT INTO customerinfo(NAME,sex,phone,address,birthday) 
+    VALUE('${params.name}','${params.sex}',${params.phone},'${params.address}','${params.birthday}');`;
+   
+    conn.query(sql,function(error,result){
+        if(error){
+            console.log(error);
+            jsonWrite(res, error);
+        }
+        if(result){
+            //返回结果
+            jsonWrite(res, result);
+            console.log(result)
+            
+        }
+    })
+    //conn.end()
+});
 module.exports = router;

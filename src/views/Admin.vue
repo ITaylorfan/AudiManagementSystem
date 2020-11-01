@@ -19,8 +19,12 @@
                  <customer-content v-show="select==='2'"></customer-content>
                  <!-- 销售页面 -->
                  <sell-content v-show="select==='3'"></sell-content>
+                 <!-- 已注册用户管理 -->
+                  <register-user-admin v-show="select==='4'"></register-user-admin>  
+                  <!-- 用户预约信息管理 -->
+                  <user-booking-info v-show="select==='5'"></user-booking-info>
                  <!-- 个人中心 -->
-                 <user-content v-if="select==='4'"></user-content>
+                 <user-content v-if="select==='6'"></user-content>
              </div>
         </div>
     </div>
@@ -33,6 +37,8 @@ import HomeContent from "../components/Admin/HomeContent"
 import CustomerContent from "../components/Admin/CustomerContent"
 import SellContent from "../components/Admin/SellContent"
 import UserContent from "../components/Admin/UserCenter"
+import RegisterUserAdmin from "../components/Admin/RegisterUserAdmin"
+import UserBookingInfo from "../components/Admin/UserBookingInfo"
 export default {
     data() {
         return {
@@ -45,7 +51,9 @@ export default {
         HomeContent,
         CustomerContent,
         SellContent,
-        UserContent
+        UserContent,
+        RegisterUserAdmin,
+        UserBookingInfo
     },
     methods: {
         //根据导航栏显示不同内容

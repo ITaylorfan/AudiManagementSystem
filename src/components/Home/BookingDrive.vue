@@ -113,7 +113,7 @@ export default {
   },
   data() {
     //自定义校验
-     var checkPhone = (rule, value, callback) => {
+    var checkPhone = (rule, value, callback) => {
       if (!value) {
         return callback(new Error("手机号不能为空"));
       }
@@ -180,7 +180,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (!this.isUserLogin) {
-             this.$message.error("请先登录！")
+            this.$message.error("请先登录！");
           } else {
             //alert("submit!");
             //console.log(new Date(this.ruleForm.date1).format("yyyy-MM-dd"))
@@ -194,19 +194,31 @@ export default {
               bookingType: "预约试驾",
             };
             userSubmit(data).then(
-              success => {
-                console.log(success);
-                this.$message({
-                  message: "提交成功！",
-                  type: "success",
+              (success) => {
+                // console.log(success);
+                setTimeout(() => {
+                  this.$message({
+                    message: "提交成功！",
+                    type: "success",
+                  });
+                }, 2000);
+
+                //加载中动画
+                let loadingInstance = this.$Loading.service({
+                  lock: true,
+                  text: "Loading",
+                  spinner: "el-icon-loading",
+                  background: "rgba(0, 0, 0, 0.7)",
                 });
-                setTimeout(()=>{
-                  this.$router.go(-1)
-                },2000)
+          
+                setTimeout(() => {
+                  loadingInstance.close();
+                  this.$router.go(-1);
+                }, 2000);
               },
-              error => {
+              (error) => {
                 console.log(error);
-                  this.$message.error("提交失败！")
+                this.$message.error("提交失败！");
               }
             );
             //console.error(data)
