@@ -13,6 +13,9 @@ const admin={
         //控制登录提示只显示一次
         isFirstLogin:true,
 
+        //保存客户信息
+        customerInfo:[]
+
     },
     mutations:{
         "SET_IS_USER_INFO_CENTER"(state,isUserInfoCenter){
@@ -29,7 +32,12 @@ const admin={
         },
         "SET_IS_FIRST_LOGIN"(state,isFirstLogin){
             state.isFirstLogin=isFirstLogin
+        },
+
+        "SET_CUSTOMER_INFO"(state,customerInfo){
+            state.customerInfo=customerInfo
         }
+
     }
 }
 

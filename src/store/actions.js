@@ -14,6 +14,9 @@ const actions={
     },
     setIsFirstLogin({commit},isFirstLogin){
         return commit("SET_IS_FIRST_LOGIN",isFirstLogin)
+    },
+    setCustomerInfo({commit},customerInfo){
+        return commit("SET_CUSTOMER_INFO",customerInfo)
     }
 }
 

@@ -2,14 +2,8 @@
   <!-- 客户组件 -->
   <div class="customer-content-wrapper">
     <el-table
-      :data="
-        tableData.filter(
-          (data) =>
-            !search ||
-            data.name.toLowerCase().includes(search.toLowerCase()) ||
-            data.id.toLowerCase().includes(search.toLowerCase())
-        )
-      "
+      :data="tableData.filter(data => !search ||data.customerId==search|| data.name.toLowerCase().includes(search.toLowerCase())
+      )"
       style="width: 100%"
       height="100%"
       stripe
@@ -120,7 +114,10 @@ import {
   deleteCustomerInfo,
   addCustomerInfo,
 } from "@/api/index";
+
+import {Admin} from "@/utils/mixin"
 export default {
+  mixins:[Admin],
   data() {
     //自定义校验
     var checkPhone = (rule, value, callback) => {
@@ -247,7 +244,7 @@ export default {
       } else {
         //添加信息
         let data = this.form;
-        console.log(data.birthday)
+        //console.log(data.birthday)
         data.birthday = new Date(data.birthday).format("yyyy-MM-dd");
         console.log(data)
         this.$confirm("此操作将添加新信息, 是否继续?", "提示", {
@@ -353,6 +350,8 @@ export default {
         (success) => {
           //console.log(success);
           this.tableData = success.data;
+          this.setCustomerInfo(this.tableData)
+          
           let date = new Date();
           this.tableData.forEach((item, index) => {
             //保留临时值

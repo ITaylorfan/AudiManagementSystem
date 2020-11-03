@@ -109,7 +109,7 @@ export function saveCustomerInfo(customerInfo){
     data:customerInfo
   })
 }
-
+//删除客户信息
 export function deleteCustomerInfo(customerId){
   return axios({
     method:"post",
@@ -117,12 +117,41 @@ export function deleteCustomerInfo(customerId){
     data:customerId
   })
 }
-//添加信息
+
+//添加客户信息
 export function addCustomerInfo(customerInfo){
   return axios({
     method:"post",
     url:`api/user/addCustomerInfo`,
     data:customerInfo
+  })
+}
+
+
+//保存销售信息
+export function saveSellInfo(sellInfo){
+  return axios({
+    method:"post",
+    url:`api/user/saveSellInfo`,
+    data:sellInfo
+  })
+}
+
+//删除销售信息
+export function deleteSellInfo(orderId){
+  return axios({
+    method:"post",
+    url:`api/user/deleteSellInfo`,
+    data:orderId
+  })
+}
+
+//添加销售信息
+export function addSellInfo(addData){
+  return axios({
+    method:"post",
+    url:`api/user/addSellInfo`,
+    data:addData
   })
 }
 

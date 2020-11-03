@@ -2,14 +2,7 @@
   <!-- 销售信息 -->
   <div class="sell-content-wrapper">
     <el-table
-      :data="
-        tableData.filter(
-          (data) =>
-            !search ||
-            data.name.toLowerCase().includes(search.toLowerCase()) ||
-            data.id.toLowerCase().includes(search.toLowerCase())
-        )
-      "
+      :data="tableData.filter((data) => !search || data.orderID == search)"
       style="width: 100%"
       height="100%"
       stripe
@@ -43,7 +36,8 @@
         </template>
       </el-table-column>
       <el-table-column label="订单 ID" prop="orderID"> </el-table-column>
-      <el-table-column label="成交金额(CNY)" prop="showMoney"> </el-table-column>
+      <el-table-column label="成交金额(CNY)" prop="showMoney">
+      </el-table-column>
       <!-- 图片预览 -->
       <el-table-column label="车型预览图">
         <template slot-scope="props">
@@ -60,7 +54,7 @@
 
       <el-table-column align="right">
         <template slot="header">
-          <el-button size="medium" type="primary">添加</el-button>
+          <el-button size="medium" type="primary" @click="addInfo">添加</el-button>
         </template>
       </el-table-column>
 
@@ -83,53 +77,63 @@
       </el-table-column>
     </el-table>
 
-    <el-dialog title="编辑信息" :visible.sync="dialogFormVisible">
+    <el-dialog :title="changeTitle" :visible.sync="dialogFormVisible">
       <el-form :model="form">
-        <el-form-item label="客户名称" :label-width="formLabelWidth">
+        <el-form-item label="客户名称" :label-width="formLabelWidth" v-if="isEdit">
           <el-input v-model="form.name" autocomplete="off"></el-input>
+        </el-form-item>
+          <el-form-item label="客户ID" :label-width="formLabelWidth" v-if="!isEdit">
+            <el-select v-model="form.customerId" placeholder="请选择客户ID">
+              <!-- 遍历客户信息id -->
+            <el-option :label="item.customerId+' '+item.name" :value="item.customerId" v-for="(item,index) in customerInfo " :key="index" ></el-option>
+            
+          </el-select>
         </el-form-item>
         <el-form-item label="成交金额(CNY)" :label-width="formLabelWidth">
           <el-input v-model="form.money" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="车型" :label-width="formLabelWidth">
-          <el-select v-model="form.cname" placeholder="请选择性别">
-              <el-option label="奥迪A3" value="1"></el-option>
-              <el-option label="奥迪A4" value="2"></el-option>
-              <el-option label="奥迪A5" value="3"></el-option>
-              <el-option label="奥迪A6" value="4"></el-option>
-              <el-option label="奥迪A7" value="5"></el-option>
-              <el-option label="奥迪A8" value="6"></el-option>
-              <el-option label="奥迪Q3" value="7"></el-option>
-              <el-option label="奥迪Q5" value="8"></el-option>
-              <el-option label="奥迪Q7" value="9"></el-option>
-              <el-option label="奥迪Q8" value="10"></el-option>
+          <el-select v-model="form.carId" placeholder="请选择性别">
+            <el-option label="奥迪A3" value="1"></el-option>
+            <el-option label="奥迪A4" value="2"></el-option>
+            <el-option label="奥迪A5" value="3"></el-option>
+            <el-option label="奥迪A6" value="4"></el-option>
+            <el-option label="奥迪A7" value="5"></el-option>
+            <el-option label="奥迪A8" value="6"></el-option>
+            <el-option label="奥迪Q3" value="7"></el-option>
+            <el-option label="奥迪Q5" value="8"></el-option>
+            <el-option label="奥迪Q7" value="9"></el-option>
+            <el-option label="奥迪Q8" value="10"></el-option>
           </el-select>
         </el-form-item>
 
-        <el-form-item label="客户地址" :label-width="formLabelWidth">
+        <el-form-item label="客户地址" :label-width="formLabelWidth" v-if="isEdit">
           <el-input v-model="form.address" autocomplete="off"></el-input>
         </el-form-item>
 
-        <el-form-item label="手机号" :label-width="formLabelWidth">
+        <el-form-item label="手机号" :label-width="formLabelWidth" v-if="isEdit">
           <el-input v-model="form.phone" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false"
-          >确 定</el-button
-        >
+        <el-button type="primary" @click="saveInfo">确 定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { getAllSellInfo } from "@/api/index";
+import { getAllSellInfo, saveSellInfo,deleteSellInfo,addSellInfo} from "@/api/index";
+import { Admin } from "@/utils/mixin";
 export default {
+  mixins: [Admin],
   data() {
     return {
       search: "",
+      changeTitle:"编辑",
+      //复用编辑框判断是否为 编辑状态
+      isEdit: true,
       tableData: [
         {
           id: "12987122",
@@ -153,22 +157,169 @@ export default {
         },
       ],
       dialogFormVisible: false,
+      CARID: 0, //保存初始id
       form: {
         name: "",
-        money:"",
+        money: "",
         cname: "",
         address: "",
         phone: "",
+        orderId: 0,
+        customerId: 0,
+        carId: 0,
       },
       formLabelWidth: "120px",
     };
   },
   methods: {
+      addInfo() {
+      
+      this.dialogFormVisible = true;
+      this.form.name = "";
+      this.form.money=0
+      this.form.address = "";
+      this.form.phone = "";
+      this.form.carId="1"
+      this.form.customerId=""
+      //不是编辑状态
+      this.isEdit = false;
+      this.changeTitle = "添加新信息";
+    },
+    //保存信息
+    saveInfo() {
+      if (this.isEdit) {
+        let data = this.form;
+        console.log(data);
+        console.log(data.carId);
+
+        console.log(this.checkNumber(data.carId));
+        if (!this.checkNumber(data.carId)) {
+          //未选择汽车 保持默认值
+          data.carId = this.CARID;
+        }
+
+        this.$confirm("此操作将保存信息, 是否继续?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        })
+          .then(() => {
+            saveSellInfo(data).then(
+              (success) => {
+                this.$message({
+                  type: "success",
+                  message: "保存成功!",
+                });
+                this.getInfo();
+              },
+              (error) => {
+                console.log(error);
+                this.$message({
+                  type: "warning",
+                  message: "保存失败!",
+                });
+              }
+            );
+            this.dialogFormVisible = false;
+          })
+          .catch(() => {
+            console.log("的");
+            this.$message({
+              type: "info",
+              message: "已取消保存",
+            });
+          });
+      } else {
+        //添加信息
+        let data = this.form;
+        //console.log(data.birthday)
+        //data.birthday = new Date(data.birthday).format("yyyy-MM-dd");
+        console.log(data);
+        this.$confirm("此操作将添加新信息, 是否继续?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        })
+          .then(() => {
+            addSellInfo(data).then(
+              (success) => {
+                this.$message({
+                  type: "success",
+                  message: "添加成功!",
+                });
+                this.getInfo();
+              },
+              (error) => {
+                console.log(error);
+                this.$message({
+                  type: "warning",
+                  message: "添加失败!",
+                });
+              }
+            );
+            this.dialogFormVisible = false;
+          })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "已取消添加",
+            });
+          });
+      }
+    },
+      //删除
+    handleDelete(index, data) {
+      //封装客户id
+      let Data = {
+       orderId: data.orderID,
+      };
+      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          //console.log("确定");
+          //删除
+          deleteSellInfo(Data).then(
+            (success) => {
+              this.$message({
+                type: "success",
+                message: "删除成功！",
+              });
+              //刷新
+              this.getInfo();
+            },
+            (error) => {
+              this.$message({
+                type: "success",
+                message: "删除失败！",
+              });
+            }
+          );
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
+    },
+    //编辑
     handleEdit(index, data) {
+      //console.log(data)
+      this.changeTitle="编辑"
+
+      this.CARID = data.carID;
+      this.form.carId = data.cname;
+      this.form.customerId = data.customerID;
+      this.form.orderId = data.orderID;
+
+      this.isEdit = true;
       this.dialogFormVisible = true;
       this.form.name = data.name;
       this.form.cname = data.cname;
-      this.form.money=data.money;
+      this.form.money = data.money;
       this.form.address = data.address;
       this.form.phone = data.phone;
     },
@@ -182,24 +333,28 @@ export default {
         }
       }
     },
+    //获取所有信息
+    getInfo() {
+      getAllSellInfo().then(
+        (success) => {
+          //console.log(success);
+          this.tableData = success.data;
+          this.tableData.forEach((item, index) => {
+            //在对象中加入图片列表属性
+            item["imageList"] = [item.imageUrl];
+            item.createTime = new Date(item.createTime).format(
+              "yyyy-MM-dd hh:mm:ss"
+            );
+            item["showMoney"] = item.money / 10000 + "万";
+          });
+         
+        },
+        (error) => {}
+      );
+    },
   },
   mounted() {
-    getAllSellInfo().then(
-      (success) => {
-        console.log(success);
-        this.tableData = success.data;
-        this.tableData.forEach((item, index) => {
-          //在对象中加入图片列表属性
-          item["imageList"] = [item.imageUrl];
-          item.createTime = new Date(item.createTime).format(
-            "yyyy-MM-dd hh:mm:ss"
-          );
-          item["showMoney"]=item.money/10000+"万"
-        });
-        //console.log(this.tableData);
-      },
-      (error) => {}
-    );
+    this.getInfo()
   },
 };
 </script>
@@ -213,7 +368,8 @@ export default {
   right: 0;
   top: 60px;
   padding-left: 180px;
-  //background-color: aquamarine;
+  padding-bottom: 80px;
+  background-color: #2e3236;
   .demo-table-expand {
     font-size: 0;
   }

@@ -6,6 +6,7 @@ module.exports = {
         user: 'root',
         password: '123456',
         database: 'audimanagementsystem',
-        port: '3306'
+        port: '3306',
+        multipleStatements: true   //可以执行多条SQL
     }
 }

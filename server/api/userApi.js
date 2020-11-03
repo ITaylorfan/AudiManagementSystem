@@ -335,4 +335,71 @@ router.post('/addCustomerInfo',(req,res)=>{
     })
     //conn.end()
 });
+
+//保存销售信息
+router.post('/saveSellInfo',(req,res)=>{
+    var params=req.body;
+    console.log(params)
+   
+    var sql1=`update customerinfo set name='${params.name}',address='${params.address}',phone=${params.phone} where customerId=${params.customerId};
+    update order_form set money=${params.money},carID=${params.carId} where orderID=${params.orderId}`
+    //var sql2=`update order_form set money=${params.money},carID=${params.carId} where orderID=${params.orderId}`
+    
+    conn.query(sql1,function(error,result){
+        if(error){
+            console.log("错误",error);
+            jsonWrite(res, error);
+        }
+        if(result){
+            //返回结果
+            jsonWrite(res, result);
+            console.log("正确",result)
+            
+        }
+    })
+ 
+});
+
+//删除一条销售记录
+router.post('/deleteSellInfo',(req,res)=>{
+    var params=req.body;
+    console.log(params)
+    var sql=`DELETE FROM order_form WHERE orderID=${params.orderId};`;
+    var sql2=`ALTER TABLE order_form AUTO_INCREMENT=1;`
+    conn.query(sql,function(error,result){
+        if(error){
+            console.log(error);
+            jsonWrite(res, error);
+        }
+        if(result){
+            //返回结果
+            jsonWrite(res, result);
+            console.log(result,"addad")
+            console.log("删除成功")
+        }
+    })
+    conn.query(sql2)
+});
+
+//添加一条销售记录
+router.post('/addSellInfo',(req,res)=>{
+    var params=req.body;
+    console.log(params)
+    var sql=`insert into  order_form(customerID,carID,money) value(${params.customerId},${params.carId},${params.money});`;
+
+    conn.query(sql,function(error,result){
+        if(error){
+            console.log(error);
+            jsonWrite(res, error);
+        }
+        if(result){
+            //返回结果
+            jsonWrite(res, result);
+            console.log(result,"addad")
+            console.log("删除成功")
+        }
+    })
+   
+});
+
 module.exports = router;
