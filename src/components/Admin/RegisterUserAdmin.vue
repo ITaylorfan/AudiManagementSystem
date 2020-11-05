@@ -43,7 +43,7 @@
 
       <el-table-column align="right">
         <template slot="header">
-          <el-button size="medium" type="primary">添加</el-button>
+          <el-button size="medium" type="primary" @click="addInfo">添加</el-button>
         </template>
       </el-table-column>
 
@@ -67,7 +67,7 @@
     </el-table>
 
     <!-- 编辑信息的表单 -->
-    <el-dialog title="编辑信息" :visible.sync="dialogFormVisible">
+    <el-dialog :title="changeTitle" :visible.sync="dialogFormVisible">
       <el-form :model="form">
         <el-form-item label="用户名称" :label-width="formLabelWidth">
           <el-input v-model="form.name" autocomplete="off"></el-input>
@@ -93,20 +93,24 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false"
-          >确 定</el-button
-        >
+        <el-button type="primary" @click="saveInfo">确 定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { getAllUserInfo } from "@/api/index";
+import {
+  getAllUserInfo,
+  updateRegisterUserInfo,
+  deleteUserInfo,
+  addUserInfo
+} from "@/api/index";
 export default {
   data() {
     return {
       search: "",
+      changeTitle:"编辑",
       //表格中的数据
       tableData: [
         {
@@ -119,30 +123,133 @@ export default {
           shopId: "10333",
         },
       ],
-
+      isEdit: false,
       dialogFormVisible: false,
       form: {
+        userInfoId: 0,
         name: "",
         sex: "",
         birthday: "",
-        phone:""
+        phone: "",
       },
       formLabelWidth: "120px",
     };
   },
   methods: {
+    //添加新信息
+    addInfo() {
+      
+      this.dialogFormVisible = true;
+      this.form.name = "";
+      this.form.sex = "男";
+      this.form.birthday = Date.parse(0);
+      this.form.phone = "";
+      //不是编辑状态
+      this.isEdit = false;
+      this.changeTitle = "添加新信息";
+    },
+    //保存信息
+    saveInfo() {
+      if (this.isEdit) {
+        let data = this.form;
+        //console.log(data);
+        data.birthday = new Date(data.birthday).format("yyyy-MM-dd");
+        this.$confirm("此操作将保存信息, 是否继续?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        })
+          .then(() => {
+            updateRegisterUserInfo(data).then(
+              (success) => {
+                this.$message({
+                  type: "success",
+                  message: "保存成功!",
+                });
+                this.getInfo();
+              },
+              (error) => {
+                console.log(error);
+                this.$message({
+                  type: "warning",
+                  message: "保存失败!",
+                });
+              }
+            );
+            this.dialogFormVisible = false;
+          })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "已取消保存",
+            });
+          });
+      } else {
+        //添加信息
+        let data = this.form;
+        //console.log(data.birthday)
+        data.birthday = new Date(data.birthday).format("yyyy-MM-dd");
+        //console.log(data);
+        this.$confirm("此操作将添加新信息, 是否继续?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        })
+          .then(() => {
+            addUserInfo(data).then(
+              (success) => {
+                this.$message({
+                  type: "success",
+                  message: "添加成功!",
+                });
+                this.getInfo();
+              },
+              (error) => {
+                console.log(error);
+                this.$message({
+                  type: "warning",
+                  message: "添加失败!",
+                });
+              }
+            );
+            this.dialogFormVisible = false;
+          })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "已取消添加",
+            });
+          });
+      }
+    },
     //删除
     handleDelete(index, data) {
+      //封装客户id
+      let Data = {
+        userInfoId: data.userInfoId,
+      };
       this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       })
         .then(() => {
-          this.$message({
-            type: "success",
-            message: "删除成功!",
-          });
+          deleteUserInfo(Data).then(
+            (success) => {
+              this.$message({
+                type: "success",
+                message: "删除成功！",
+              });
+              //刷新
+              this.getInfo();
+            },
+            (error) => {
+              this.$message({
+                type: "success",
+                message: "删除失败！",
+              });
+            }
+          );
         })
         .catch(() => {
           this.$message({
@@ -153,14 +260,17 @@ export default {
     },
     //编辑
     handleEdit(index, data) {
-     // console.log(index);
+      // console.log(index);
       //console.log(data);
       //this.dialogTableVisible=true
+      this.changeTitle="编辑"
+      this.isEdit = true;
       this.dialogFormVisible = true;
-      this.form.name=data.name
-      this.form.sex=data.sex
-      this.form.birthday=data.birthday
-      this.form.phone=data.phone
+      this.form.name = data.name;
+      this.form.sex = data.sex;
+      this.form.birthday = data.birthday;
+      this.form.phone = data.phone;
+      this.form.userInfoId = data.userInfoId;
     },
     // 合并列用到的函数
     arraySpanMethod({ row, column, rowIndex, columnIndex }) {
@@ -172,39 +282,43 @@ export default {
         }
       }
     },
+
+    getInfo() {
+      //获取客户信息
+      getAllUserInfo().then(
+        (success) => {
+          //console.log(success);
+          this.tableData = success.data;
+          let date = new Date();
+          this.tableData.forEach((item, index) => {
+            //保留临时值
+            let br = item.birthday;
+            item.birthday = new Date(item.birthday).format("yyyy-MM-dd");
+            //console.log(new Date(item.birthday).format("yyyy-MM-dd"));
+            // let age = {
+            //   age: Math.floor((date.getTime() - item.birthday) / 1000 / 60 / 60 / 24 / 365),
+            // };
+            item["age"] = Math.floor(
+              (date.getTime() - new Date(br).getTime()) /
+                1000 /
+                60 /
+                60 /
+                24 /
+                365
+            );
+            //console.log(Math.floor((date.getTime() - new Date(br).getTime()) / 1000 / 60 / 60 / 24 / 365))
+            //console.log(new Date(br).getTime())
+            //console.log(date.getTime() - item.birthday)
+          });
+
+          //console.log(this.tableData)
+        },
+        (error) => {}
+      );
+    },
   },
   mounted() {
-    //获取客户信息
-    getAllUserInfo().then(
-      (success) => {
-        //console.log(success);
-        this.tableData = success.data;
-        let date = new Date();
-        this.tableData.forEach((item, index) => {
-          //保留临时值
-          let br = item.birthday;
-          item.birthday = new Date(item.birthday).format("yyyy-MM-dd");
-          //console.log(new Date(item.birthday).format("yyyy-MM-dd"));
-          // let age = {
-          //   age: Math.floor((date.getTime() - item.birthday) / 1000 / 60 / 60 / 24 / 365),
-          // };
-          item["age"] = Math.floor(
-            (date.getTime() - new Date(br).getTime()) /
-              1000 /
-              60 /
-              60 /
-              24 /
-              365
-          );
-          //console.log(Math.floor((date.getTime() - new Date(br).getTime()) / 1000 / 60 / 60 / 24 / 365))
-          //console.log(new Date(br).getTime())
-          //console.log(date.getTime() - item.birthday)
-        });
-
-        //console.log(this.tableData)
-      },
-      (error) => {}
-    );
+    this.getInfo();
   },
 };
 </script>

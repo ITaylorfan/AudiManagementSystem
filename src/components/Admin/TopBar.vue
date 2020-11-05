@@ -165,7 +165,7 @@ export default {
       this.srcList[0]=this.dataList.avatar
       //装到vuex中方便其他地方掉用
       this.setAdministratorsInfo(this.dataList)
-      //console.log(this.dataList)
+      console.log(this.dataList)
     },error=>{
       console.log(error)
       let data={

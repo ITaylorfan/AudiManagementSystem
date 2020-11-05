@@ -17,7 +17,7 @@ export default {
       var option = {
         title: {
         text: '各车型销售总量',
-        subtext: '截至2020年9月',
+        subtext: '截至2020年10月',
         left: 'center'
     },
      tooltip: {

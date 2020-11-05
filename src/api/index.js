@@ -155,6 +155,67 @@ export function addSellInfo(addData){
   })
 }
 
+//更改已注册用户信息
+export function updateRegisterUserInfo(updateData){
+  return axios({
+    method:"post",
+    url:`api/user/updateRegisterUserInfo`,
+    data:updateData
+  })
+}
+
+export function deleteUserInfo(userInfoId){
+  return axios({
+    method:"post",
+    url:`api/user/deleteUserInfo`,
+    data:userInfoId
+  })
+}
+export function addUserInfo(addData){
+  return axios({
+    method:"post",
+    url:`api/user/addUserInfo`,
+    data:addData
+  })
+}
+
+
+//通过一条用户预约信息
+export function pastUserSubmit(id){
+  return axios({
+    method:"post",
+    url:`api/user/pastUserSubmit`,
+    data:id
+  })
+}
+
+//拒绝通过一条用户预约信息
+export function noPastUserSubmit(info){
+  return axios({
+    method:"post",
+    url:`api/user/noPastUserSubmit`,
+    data:info
+  })
+}
+
+//删除一条用户预约信息
+export function deleteUserSubmit(id){
+  return axios({
+    method:"post",
+    url:`api/user/deleteUserSubmit`,
+    data:id
+  })
+}
+
+//修改管理员信息
+export function updateAdministratorInfo(info){
+  return axios({
+    method:"post",
+    url:`api/user/updateAdministratorInfo`,
+    data:info
+  })
+}
+
 //Date对象原型方法扩展
 Date.prototype.format = function (fmt) {
     //author: meizz
@@ -192,3 +253,27 @@ Date.prototype.format = function (fmt) {
 
     return fmt;
   }; //将data转换为yyyy/MM/dd类型
+
+//blob对象转base64
+export function blobToDataURI(blob, callback) {
+    var reader = new FileReader();
+    reader.readAsDataURL(blob);
+    reader.onload = function (e) {
+        callback(e.target.result);
+    }
+ }
+
+export function urlToBlob(the_url, callback) {
+  let xhr = new XMLHttpRequest();
+  xhr.open("get", the_url, true);
+  xhr.responseType = "blob";
+  xhr.onload = function() {
+      if (this.status == 200) {
+          if (callback) {
+              callback(this.response);
+          }
+      }
+  };
+  xhr.send();
+}
+

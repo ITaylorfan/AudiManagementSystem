@@ -7,7 +7,7 @@
           (data) =>
             !search ||
             data.name.toLowerCase().includes(search.toLowerCase()) ||
-            data.id.toLowerCase().includes(search.toLowerCase())
+            data.id == search||data.status.includes(search)
         )
       "
       style="width: 100%"
@@ -36,8 +36,8 @@
             <el-form-item label="预约类型">
               <span>{{ props.row.bookingType }}</span>
             </el-form-item>
-                <el-form-item label="创建时间">
-              <span>{{ props.row.createTime}}</span>
+            <el-form-item label="创建时间">
+              <span>{{ props.row.createTime }}</span>
             </el-form-item>
           </el-form>
         </template>
@@ -58,57 +58,60 @@
           <!-- slot-scope="scope" -->
           <el-input v-model="search" size="big" placeholder="输入关键字搜索" />
         </template>
-        <template slot-scope="scope" >
-          <el-button size="mini" type="success" @click="handleEdit(scope.$index, scope.row)"
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="success"
+            @click="handlePast(scope.$index, scope.row)"
+            :disabled="scope.row.status == '通过'"
+            ref="pass"
             >通过</el-button
           >
           <el-button
             size="mini"
+            type="warning"
+            @click="handleNoPast(scope.$index, scope.row)"
+            :disabled="scope.row.status == '不通过'"
+            ref="noPass"
+            >不通过</el-button
+          >
+           <el-button
+            size="mini"
             type="danger"
             @click="handleDelete(scope.$index, scope.row)"
-            >不通过</el-button
+            ref="delete"
+            >删除</el-button
           >
         </template>
       </el-table-column>
     </el-table>
 
     <!-- 编辑信息的表单 -->
-    <el-dialog title="编辑信息" :visible.sync="dialogFormVisible">
-      <el-form :model="form">
-        <el-form-item label="客户名称" :label-width="formLabelWidth">
-          <el-input v-model="form.name" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="性别" :label-width="formLabelWidth">
-          <el-select v-model="form.sex" placeholder="请选择性别">
-            <el-option label="男" value="男"></el-option>
-            <el-option label="女" value="女"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="客户生日" :label-width="formLabelWidth">
-          <el-date-picker
-            type="date"
-            placeholder="选择日期"
-            v-model="form.birthday"
-            :default-value="['2000-01-01']"
-          ></el-date-picker>
-        </el-form-item>
-
-        <el-form-item label="客户地址" :label-width="formLabelWidth">
-          <el-input v-model="form.address" autocomplete="off"></el-input>
+    <el-dialog title="审核" :visible.sync="dialogFormVisible">
+      <el-form :model="form" :rules="rules"  ref="ruleForm">
+        <el-form-item
+          label="拒绝理由"
+          :label-width="formLabelWidth"
+          prop="content"
+        >
+          <el-input v-model="form.content" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false"
-          >确 定</el-button
-        >
+        <el-button type="primary" @click="saveInfo('ruleForm')">确 定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { getAllUserBookingInfo } from "@/api/index";
+import {
+  getAllUserBookingInfo,
+  pastUserSubmit,
+  noPastUserSubmit,
+  deleteUserSubmit
+} from "@/api/index";
 export default {
   data() {
     return {
@@ -128,41 +131,144 @@ export default {
 
       dialogFormVisible: false,
       form: {
-        name: "",
-        sex: "",
-        birthday: "",
-        phone:""
+        content: "",
       },
+      //保存行数据
+      rowData: {},
       formLabelWidth: "120px",
+
+      //校验规则
+      rules: {
+        content: [
+          { required: true, message: "请输入理由", trigger: "blur" },
+          { min: 5, max: 50, message: "最少输入五个字符", trigger: "blur" },
+        ],
+      },
     };
   },
   methods: {
+    //保存拒绝的理由
+    saveInfo(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          //console.log(this.rowData);
+          this.$confirm("确定保存么?", "提示", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning",
+          })
+            .then(() => {
+              let Data = {
+                id: this.rowData.id,
+                content: this.form.content,
+              };
+              noPastUserSubmit(Data).then(
+                (success) => {
+                  this.$message({
+                    type: "success",
+                    message: "已拒绝!",
+                  });
+                  //刷新数据
+                  (this.dialogFormVisible = false), this.refreshInfo();
+                },
+                (error) => {
+                  this.$message({
+                    type: "warning",
+                    message: "处理错误!",
+                  });
+                }
+              );
+            })
+            .catch(() => {
+              this.$message({
+                type: "info",
+                message: "已取消!",
+              });
+            });
+        }else{
+
+        }
+      });
+    },
     //删除
-    handleDelete(index, data) {
-      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
+    handleDelete(index,data){
+        this.$confirm("确定删除么?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       })
         .then(() => {
-          this.$message({
-            type: "success",
-            message: "删除成功!",
-          });
+          let Data={
+            id:data.id
+          }
+          deleteUserSubmit(Data).then(
+            (success) => {
+              this.$message({
+                type: "success",
+                message: "已删除!",
+              });
+              //刷新数据
+              this.refreshInfo();
+            },
+            (error) => {
+              this.$message({
+                type: "warning",
+                message: "处理错误!",
+              });
+            }
+          );
         })
         .catch(() => {
           this.$message({
             type: "info",
-            message: "已取消删除",
+            message: "已取消!",
+          });
+        })
+    },
+    //不通过
+    handleNoPast(index, data) {
+      this.dialogFormVisible = true;
+      this.rowData = data;
+    },
+
+    //通过
+    handlePast(index, data) {
+      // console.log(index);
+      //console.log(data);
+      //console.log(this.$refs.pass)
+      //封装数据
+      let Data = {
+        id: data.id,
+      };
+      this.$confirm("确定通过么?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          pastUserSubmit(Data).then(
+            (success) => {
+              this.$message({
+                type: "success",
+                message: "已通过!",
+              });
+              //刷新数据
+              this.refreshInfo();
+            },
+            (error) => {
+              this.$message({
+                type: "warning",
+                message: "处理错误!",
+              });
+            }
+          );
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消!",
           });
         });
-    },
-    //编辑
-    handleEdit(index, data) {
-      console.log(index);
-      console.log(data);
-      //this.dialogTableVisible=true
-      this.dialogFormVisible = true;
     },
     // 合并列用到的函数
     arraySpanMethod({ row, column, rowIndex, columnIndex }) {
@@ -174,30 +280,34 @@ export default {
         }
       }
     },
+
+    refreshInfo() {
+      //获取预约信息
+      getAllUserBookingInfo().then(
+        (success) => {
+          //console.log(success);
+          this.tableData = success.data;
+          let date = new Date();
+          this.tableData.forEach((item, index) => {
+            if (item.sex === "先生") {
+              item.sex = "男";
+            } else {
+              item.sex = "女";
+            }
+            //日期转换
+            item.bookingTime = new Date(item.bookingTime).format("yyyy-MM-dd");
+            item.createTime = new Date(item.createTime).format(
+              "yyyy-MM-dd hh:mm:ss"
+            );
+          });
+        },
+        (error) => {}
+      );
+    },
   },
+
   mounted() {
-    //获取预约信息
-    getAllUserBookingInfo().then(
-      (success) => {
-        //console.log(success);
-        this.tableData = success.data;
-        let date = new Date();
-        this.tableData.forEach((item, index) => {
-          if(item.sex==='先生'){
-            item.sex="男"
-          }else{
-            item.sex="女"
-          }
-          //日期转换
-          item.bookingTime = new Date(item.bookingTime).format("yyyy-MM-dd");
-          item.createTime =  new Date(item.createTime).format("yyyy-MM-dd hh:mm:ss");
-
-        });
-
-        
-      },
-      (error) => {}
-    );
+    this.refreshInfo();
   },
 };
 </script>

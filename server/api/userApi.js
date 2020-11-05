@@ -402,4 +402,156 @@ router.post('/addSellInfo',(req,res)=>{
    
 });
 
+
+//更改一条已注册用户信息
+router.post('/updateRegisterUserInfo',(req,res)=>{
+    var params=req.body;
+    console.log(params)
+    var sql=`update user_login_info set name='${params.name}',
+    sex='${params.sex}',birthday='${params.birthday}',phone=${params.phone} where userInfoId=${params.userInfoId};`;
+
+    conn.query(sql,function(error,result){
+        if(error){
+            console.log(error);
+            jsonWrite(res, error);
+        }
+        if(result){
+            //返回结果
+            jsonWrite(res, result);
+            console.log(result)
+           
+        }
+    })
+   
+});
+
+//删除一条用户记录
+router.post('/deleteUserInfo',(req,res)=>{
+    var params=req.body;
+    console.log(params)
+    var sql=`DELETE FROM user_login_info WHERE userInfoId=${params.userInfoId};`;
+    var sql2=`ALTER TABLE user_login_info AUTO_INCREMENT=1;`
+    conn.query(sql,function(error,result){
+        if(error){
+            console.log(error);
+            jsonWrite(res, error);
+        }
+        if(result){
+            //返回结果
+            jsonWrite(res, result);
+            console.log(result,"addad")
+            console.log("删除成功")
+        }
+    })
+    conn.query(sql2)
+});
+
+
+//添加一条注册用户信息记录
+router.post('/addUserInfo',(req,res)=>{
+    var params=req.body;
+    console.log(params)
+    var sql=`insert into user_login_info(name,sex,birthday,phone) value('${params.name}','${params.sex}','${params.birthday}','${params.phone}');`;
+
+    conn.query(sql,function(error,result){
+        if(error){
+            console.log(error);
+            jsonWrite(res, error);
+        }
+        if(result){
+            //返回结果
+            jsonWrite(res, result);
+            console.log(result)
+            console.log("删除成功")
+        }
+    })
+   
+});
+
+//通过一条用户预约记录
+router.post('/pastUserSubmit',(req,res)=>{
+    var params=req.body;
+    console.log(params)
+    var sql=`update user_submit set status='通过' where id=${params.id};
+    update user_notice set content='预约成功！' where userSubmitId=${params.id}`
+
+    conn.query(sql,function(error,result){
+        if(error){
+            console.log(error);
+            jsonWrite(res, error);
+        }
+        if(result){
+            //返回结果
+            jsonWrite(res, result);
+            console.log(result)
+           
+        }
+    })
+   
+});
+
+//拒绝通过一条用户预约记录
+router.post('/noPastUserSubmit',(req,res)=>{
+    var params=req.body;
+    console.log(params)
+    var sql=`update user_submit set status='不通过' where id=${params.id};
+    update user_notice set content='${params.content}' where userSubmitId=${params.id}`
+
+    conn.query(sql,function(error,result){
+        if(error){
+            console.log(error);
+            jsonWrite(res, error);
+        }
+        if(result){
+            //返回结果
+            jsonWrite(res, result);
+            console.log(result)
+           
+        }
+    })
+   
+});
+
+//删除一条用户预约记录
+router.post('/deleteUserSubmit',(req,res)=>{
+    var params=req.body;
+    console.log(params)
+    var sql=`delete from  user_submit where id=${params.id}`
+    var sql2=`ALTER TABLE user_submit AUTO_INCREMENT=1;`
+    conn.query(sql,function(error,result){
+        if(error){
+            console.log(error);
+            jsonWrite(res, error);
+        }
+        if(result){
+            //返回结果
+            jsonWrite(res, result);
+            console.log(result)
+           
+        }
+    })
+   conn.query(sql2)
+});
+
+//修改当前管理员信息
+router.post('/updateAdministratorInfo',(req,res)=>{
+    var params=req.body;
+    console.log(params)
+    var sql=`update logininfo  set nickname='${params.nickname}',age=${params.age},sex='${params.sex}',
+    birthday='${params.birthday}',blob=${params.avatarBlob};`
+   
+    conn.query(sql,function(error,result){
+        if(error){
+            console.log(error);
+            jsonWrite(res, error);
+        }
+        if(result){
+            //返回结果
+            jsonWrite(res, result);
+            console.log(result)
+           
+        }
+    })
+   
+});
 module.exports = router;

@@ -72,7 +72,12 @@
 
 <script>
 import { Admin } from "../../utils/mixin";
-import { DateToString } from "../../api/index";
+import {
+  DateToString,
+  blobToDataURI,
+  urlToBlob,
+  updateAdministratorInfo,
+} from "../../api/index";
 export default {
   mixins: [Admin],
   watch: {
@@ -139,10 +144,10 @@ export default {
           }
         };
         if (this.ruleForm.fileList.length === 1) {
-           let inputFile = document
-          .getElementById("uploader")
-          .getElementsByTagName("div")[0]
-          .getElementsByTagName("input")[0];
+          let inputFile = document
+            .getElementById("uploader")
+            .getElementsByTagName("div")[0]
+            .getElementsByTagName("input")[0];
           //console.log(inputFile)
           //此变量是判断是否已经上传文件
           inputFile.addEventListener("click", hanle, false); //满足条件给input绑定事件
@@ -182,10 +187,25 @@ export default {
                 24 /
                 365
             ),
+            avatarBlob: "",
           };
-          console.log(this.ruleForm.fileList[0].url)
-     
+          console.log(this.ruleForm.fileList[0].url);
           console.log(data);
+          urlToBlob(data.avatar, function (result) {
+            data.avatarBlob = result;
+            console.log(data);
+            setTimeout(() => {
+              //上传数据到node
+              updateAdministratorInfo(data).then(
+                (success) => {
+                  console.log(success)
+                },
+                (error) => {
+                  console.log(error);
+                }
+              );
+            }, 1000);
+          });
         } else {
           console.log("error submit!!");
           return false;
