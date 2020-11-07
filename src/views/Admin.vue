@@ -9,7 +9,7 @@
         <div class="right-wrapper">
              <!-- 顶部栏 -->
              <div class="top-bar-wrapper">
-                <top-bar @dropdownMenu="dropSelectClick"></top-bar>
+                <top-bar @dropdownMenu="dropSelectClick" ref="topBar"></top-bar>
              </div>
              <!-- 内容显示区 -->
              <div class="content-wrapper">
@@ -24,7 +24,7 @@
                   <!-- 用户预约信息管理 -->
                   <user-booking-info v-show="select==='5'"></user-booking-info>
                  <!-- 个人中心 -->
-                 <user-content v-if="select==='6'"></user-content>
+                 <user-content v-if="select==='6'" @refreshData="refreshData"></user-content>
              </div>
         </div>
     </div>
@@ -56,6 +56,10 @@ export default {
         UserBookingInfo
     },
     methods: {
+        //调用兄弟组件topbar中的方法
+        refreshData(){
+            this.$refs.topBar.getInfo()
+        },
         //根据导航栏显示不同内容
         selectClick(index){
             //console.log(index)

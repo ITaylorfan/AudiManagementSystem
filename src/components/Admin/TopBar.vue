@@ -51,15 +51,15 @@
         <div class="avater" id="closeImage">
           <!-- <img src="../../assets/images/TS.jpg" alt="" /> -->
           <el-image
-            style="width: 40px; height: 40px;border-radius:50%"
+            style="width: 40px; height: 40px; border-radius: 50%"
             :src="url"
             :preview-src-list="srcList"
-            >
+          >
           </el-image>
         </div>
       </div>
       <div class="name-wrapper">
-        <span>{{dataList.nickname}}</span>
+        <span>{{ dataList.nickname }}</span>
       </div>
       <div class="arrow-wrapper">
         <!-- <i class="el-icon-caret-bottom"></i> -->
@@ -70,9 +70,14 @@
           <div class="marginTop">
             <!-- 下拉列表 -->
             <el-dropdown-menu slot="dropdown" style="top: 50px">
-              <el-dropdown-item icon="el-icon-user" command="a">个人中心</el-dropdown-item>
+              <el-dropdown-item icon="el-icon-user" command="a"
+                >个人中心</el-dropdown-item
+              >
 
-              <el-dropdown-item icon="el-icon-circle-close" id="exitLogin"  command="b"
+              <el-dropdown-item
+                icon="el-icon-circle-close"
+                id="exitLogin"
+                command="b"
                 >退出登录</el-dropdown-item
               >
             </el-dropdown-menu>
@@ -84,31 +89,31 @@
 </template>
 
 <script>
-import {Admin} from "../../utils/mixin"
-import { administratorsInfo,notice } from "@/api/index.js";
-import {saveLoginStatus} from "@/api/localStorage"
+import { Admin } from "../../utils/mixin";
+import { administratorsInfo, notice } from "@/api/index.js";
+import { saveLoginStatus } from "@/api/localStorage";
 export default {
-  mixins:[Admin],
+  mixins: [Admin],
   methods: {
-      handleCommand(command) {
-        //console.log(command)
-        switch(command){
-          case "a":
-            this.$emit("dropdownMenu","6")
-            break
-          case "b":
-            //退出登录
-            this.setIsLogin(false)
-            saveLoginStatus("isLogin",false)
-            this.$router.push("Login")
-            //console.log(this.isLogin)
-            break
-        }
-      },
+    handleCommand(command) {
+      //console.log(command)
+      switch (command) {
+        case "a":
+          this.$emit("dropdownMenu", "6");
+          break;
+        case "b":
+          //退出登录
+          this.setIsLogin(false);
+          saveLoginStatus("isLogin", false);
+          this.$router.push("Login");
+          //console.log(this.isLogin)
+          break;
+      }
+    },
     //去个人用户中心
-    goUserInfoCenter(){
-     this.setIsUserInfoCenter(true)
-     console.log(this.isUserInfoCenter)
+    goUserInfoCenter() {
+      this.setIsUserInfoCenter(true);
+      console.log(this.isUserInfoCenter);
     },
     // 合并列用到的函数
     arraySpanMethod({ row, column, rowIndex, columnIndex }) {
@@ -120,17 +125,57 @@ export default {
         }
       }
     },
+
+    getInfo() {
+      let data = {
+        manageId: 1,
+      };
+      administratorsInfo(data).then(
+        (success) => {
+          //console.log(success)
+          this.dataList = success.data[0];
+          //给头像获取链接
+          (this.url = this.dataList.avatarBase),
+            (this.srcList[0] = this.dataList.avatarBase);
+
+          //装到vuex中方便其他地方调用
+          this.setAdministratorsInfo(this.dataList);
+
+          //console.log(this.dataList)
+        },
+        (error) => {
+          console.log(error);
+          let data = {
+            nickname: "error",
+          };
+          this.dataList = data;
+        }
+      );
+
+      notice().then(
+        (success) => {
+          //console.log(success)
+          this.gridData = success.data;
+          //调用原型扩展函数进行转换
+          //console.log(new Date(this.gridData[0].date).format("yyyy-MM-dd h:m:s"))
+          this.gridData.forEach((item, index) => {
+            //console.log(item)
+            item.date = new Date(item.date).format("yyyy-MM-dd h:m:s");
+          });
+          //需要转化时间格式
+        },
+        (error) => {}
+      );
+    },
   },
   data() {
     return {
       //数据
-      dataList:{},
+      dataList: {},
       // 图片预览
-      url:"https://pic.downk.cc/item/5f7b19dd160a154a67b5027d.jpg",
-        
-      srcList: [
-        "https://pic.downk.cc/item/5f7b19dd160a154a67b5027d.jpg"
-      ],
+      url: "https://pic.downk.cc/item/5f7b19dd160a154a67b5027d.jpg",
+
+      srcList: ["https://pic.downk.cc/item/5f7b19dd160a154a67b5027d.jpg"],
       //搜索框变量
       inputSearch: "",
       gridData: [
@@ -139,10 +184,10 @@ export default {
           name: "王小虎",
           content: "上海市普陀区金沙江路 1518 弄啊啊啊啊啊啊阿",
         },
-        
       ],
     };
   },
+
   computed: {
     count() {
       return this.gridData.length;
@@ -154,39 +199,7 @@ export default {
   },
 
   mounted() {
-    //console.log("topbar")
-    let data={
-      manageId:1
-    }
-    administratorsInfo(data).then(success=>{
-      //console.log(success)
-      this.dataList=success.data[0]
-      this.url=this.dataList.avatar,
-      this.srcList[0]=this.dataList.avatar
-      //装到vuex中方便其他地方掉用
-      this.setAdministratorsInfo(this.dataList)
-      console.log(this.dataList)
-    },error=>{
-      console.log(error)
-      let data={
-        nickname:"error"
-      }
-      this.dataList=data
-    })
-
-    notice().then(success=>{
-      //console.log(success)
-      this.gridData=success.data
-      //调用原型扩展函数进行转换
-      //console.log(new Date(this.gridData[0].date).format("yyyy-MM-dd h:m:s"))
-      this.gridData.forEach((item,index)=>{
-        //console.log(item)
-        item.date=new Date(item.date).format("yyyy-MM-dd h:m:s")
-      })
-      //需要转化时间格式
-    },error=>{
-
-    })
+    this.getInfo()
   },
 };
 </script>
@@ -270,7 +283,7 @@ export default {
       padding-left: 10px;
       color: white;
     }
-    .arrow-wrapper { 
+    .arrow-wrapper {
       flex: 0 0 40px;
       height: 100%;
       color: white;
@@ -297,10 +310,10 @@ export default {
 #exitLogin {
   color: red;
 }
-#closeImage{
+#closeImage {
   color: white;
 }
-#arrow-bottom{
+#arrow-bottom {
   cursor: pointer;
 }
 </style>

@@ -209,6 +209,7 @@ export function deleteUserSubmit(id){
 
 //修改管理员信息
 export function updateAdministratorInfo(info){
+  //console.log(info)
   return axios({
     method:"post",
     url:`api/user/updateAdministratorInfo`,
@@ -263,6 +264,7 @@ export function blobToDataURI(blob, callback) {
     }
  }
 
+ //url转blob
 export function urlToBlob(the_url, callback) {
   let xhr = new XMLHttpRequest();
   xhr.open("get", the_url, true);
@@ -276,4 +278,30 @@ export function urlToBlob(the_url, callback) {
   };
   xhr.send();
 }
+
+//url转base64
+export function getBase64(url, callback) {
+  var Img = new Image(),
+    dataURL = '';
+  Img.src = url + '?v=' + Math.random();
+  Img.setAttribute('crossOrigin', 'Anonymous');
+  Img.onload = function() {
+    var canvas = document.createElement('canvas'),
+      width = Img.width,
+      height = Img.height;
+    canvas.width = width;
+    canvas.height = height;
+    canvas.getContext('2d').drawImage(Img, 0, 0, width, height);
+    dataURL = canvas.toDataURL('image/jpeg');
+    return callback ? callback(dataURL) : null;
+  };
+}
+
+//blob转base64
+export function blobToDataURL(blob, callback) {
+  let a = new FileReader();
+  a.onload = function (e) { callback(e.target.result); }
+  a.readAsDataURL(blob);
+}
+
 

@@ -77,6 +77,8 @@ import {
   blobToDataURI,
   urlToBlob,
   updateAdministratorInfo,
+  getBase64,
+  blobToDataURL,
 } from "../../api/index";
 export default {
   mixins: [Admin],
@@ -94,6 +96,7 @@ export default {
 
       //表单内容
       ruleForm: {
+        manageId: 1,
         name: "",
         sex: "",
         birthday: "",
@@ -164,7 +167,7 @@ export default {
       //console.log(this.ruleForm.fileList)
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert("submit!");
+          //alert("submit!");
           //封装成对象
           //new Date(data).format("yyyy/MM/dd");
           var date = new Date();
@@ -175,6 +178,7 @@ export default {
 
           //封装对象数据
           let data = {
+            manageId: this.ruleForm.manageId,
             nickname: this.ruleForm.name,
             sex: this.ruleForm.sex,
             birthday: new Date(this.ruleForm.birthday).format("yyyy-MM-dd"),
@@ -187,24 +191,52 @@ export default {
                 24 /
                 365
             ),
-            avatarBlob: "",
+            avatarBase: "",
           };
-          console.log(this.ruleForm.fileList[0].url);
-          console.log(data);
+          //console.log(this.ruleForm.fileList[0].url);
+          //console.log(data);
+
+          //先转换成blob
+          // urlToBlob(data.avatar, function (result) {
+          //   data.avatarBlob = result;
+          //   console.log(data);
+          //   //上传数据到node
+          //   updateAdministratorInfo(data).then(
+          //     (success) => {
+          //       console.log(success);
+          //     },
+          //     (error) => {
+          //       console.log(error);
+          //     }
+          //   );
+          // });
+
+          //url转blob
+          let that = this;
           urlToBlob(data.avatar, function (result) {
             data.avatarBlob = result;
-            console.log(data);
-            setTimeout(() => {
-              //上传数据到node
+            //console.log(data);
+            //blob转bese64
+            blobToDataURL(result, function (result2) {
+              //console.log(result2)
+              that.base = result2;
+              data.avatarBase = result2;
+
               updateAdministratorInfo(data).then(
                 (success) => {
-                  console.log(success)
+                  //console.log(success);
+                  //调用topbar中的更新数据方法
+                  that.$emit("refreshData");
+                  that.$message({
+                    message: "保存信息成功！",
+                    type: "success",
+                  });
                 },
                 (error) => {
                   console.log(error);
                 }
               );
-            }, 1000);
+            });
           });
         } else {
           console.log("error submit!!");
@@ -248,23 +280,31 @@ export default {
       }
       return isJPG && isLt2M;
     },
+
+    //更新数据
+    getInfo() {
+      //console.log(this.administratorsInfo.nickname);
+      //给表单中赋值
+      if (this.administratorsInfo.nickname) {
+        this.ruleForm.manageId = this.administratorsInfo.manageId;
+        //昵称
+        this.ruleForm.name = this.administratorsInfo.nickname;
+        //性别
+        this.ruleForm.sex = this.administratorsInfo.sex;
+        //头像
+        this.ruleForm.fileList.push({
+          url: this.administratorsInfo.avatarBase,
+        });
+        //生日
+        this.ruleForm.birthday = Date.parse(this.administratorsInfo.birthday);
+        //console.log(this.ruleForm.birthday)
+        //console.log(this.ruleForm.fileList[0])
+      }
+    },
   },
 
   mounted() {
-    //console.log(this.administratorsInfo.nickname);
-    //给表单中赋值
-    if (this.administratorsInfo.nickname) {
-      //昵称
-      this.ruleForm.name = this.administratorsInfo.nickname;
-      //性别
-      this.ruleForm.sex = this.administratorsInfo.sex;
-      //头像
-      this.ruleForm.fileList.push({ url: this.administratorsInfo.avatar });
-      //生日
-      this.ruleForm.birthday = Date.parse(this.administratorsInfo.birthday);
-      //console.log(this.ruleForm.birthday)
-      //console.log(this.ruleForm.fileList[0])
-    }
+    this.getInfo();
   },
 };
 </script>

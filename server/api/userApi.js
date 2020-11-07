@@ -93,17 +93,17 @@ router.post('/register',(req,res)=>{
 //获取管理员登录用户信息
 router.post('/administratorsInfo',(req,res)=>{
     var params=req.body;
-    console.log(params)
+    //console.log(params)
     var sql=`select * from logininfo where manageId=${params.manageId}`;
     conn.query(sql,function(error,result){
         if(error){
-            console.log(error);
+            //console.log(error);
             jsonWrite(res, error);
         }
         if(result){
             //返回结果
             jsonWrite(res, result);
-            console.log(result)
+            //console.log(result)
         }
     })
 
@@ -207,7 +207,7 @@ router.post('/userSubmit',(req,res)=>{
     var params=req.body;
     console.log(params)
     var sql=`INSERT INTO user_submit(userInfoId,carId,bookingTime,phone,NAME,sex,bookingType) 
-    VALUE(${params.userInfoId},${params.carType},'${params.bookingTime}',${params.phone},'${params.name}','${params.sex}','${params.bookingType}')`;
+    VALUE(${params.userInfoId},${params.carType},'${params.bookingTime}',${params.phone},'${params.name}','${params.sex}','${params.bookingType}');`;
     conn.query(sql,function(error,result){
         if(error){
             console.log(error);
@@ -217,9 +217,23 @@ router.post('/userSubmit',(req,res)=>{
             //返回结果
             jsonWrite(res, result);
             console.log(result)
+            
         }
     })
 
+    // var sql2=`select * from notice;`
+    // conn.query(sql2,function(error,result){
+    //     if(error){
+    //         console.log(error);
+    //         jsonWrite(res, error);
+    //     }
+    //     if(result){
+    //         //返回结果
+    //         jsonWrite(res, result);
+    //         console.log(result)
+            
+    //     }
+    // })
 })
 
 //后台所有获取已注册用户信息
@@ -536,9 +550,9 @@ router.post('/deleteUserSubmit',(req,res)=>{
 //修改当前管理员信息
 router.post('/updateAdministratorInfo',(req,res)=>{
     var params=req.body;
-    console.log(params)
+    //console.log(params)
     var sql=`update logininfo  set nickname='${params.nickname}',age=${params.age},sex='${params.sex}',
-    birthday='${params.birthday}',blob=${params.avatarBlob};`
+    birthday='${params.birthday}',avatarBase='${params.avatarBase}' where manageId=${params.manageId};`
    
     conn.query(sql,function(error,result){
         if(error){

@@ -77,7 +77,7 @@
                   v-for="(item, index) in noticeList"
                   :key="index"
                 >
-                  {{ index + 1 + ".  " + item.content + item.createTime }}
+                  {{ index + 1 + ".  " +item.createTime+" "+ item.content}}
                 </div>
               </div>
               <div v-else>
@@ -204,6 +204,7 @@ export default {
           this.noticeList.forEach((item, index) => {
             item.createTime = new Date(item.createTime).format("yyyy-MM-dd");
           });
+          this.noticeList.reverse()
         },
         (error) => {
           this.$message.error("获取通知信息错误！");
