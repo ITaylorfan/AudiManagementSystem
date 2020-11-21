@@ -1,4 +1,5 @@
 <template>
+<!-- 用户注册 -->
   <div class="register-wrapper">
     <header>
       <!-- 顶部图片 -->
@@ -41,6 +42,40 @@
                 autocomplete="off"
               ></el-input>
             </el-form-item>
+               <el-form-item label="生日" required>
+              <el-col>
+                <el-form-item prop="date1">
+                  <el-date-picker
+                    type="date"
+                    placeholder="选择日期"
+                    v-model="ruleForm.date1"
+                    style="width: 100%"
+                    :picker-options="pickerOptions"
+                    :default-value="['2000-01-01']"
+                  ></el-date-picker>
+                </el-form-item>
+              </el-col>
+            </el-form-item>
+            <el-form-item label="姓名" prop="name">
+              <el-input
+                v-model="ruleForm.name"
+                placeholder="请输入姓名"
+              ></el-input>
+            </el-form-item>
+
+            <el-form-item label="性别" prop="sex" required>
+              <el-radio-group v-model="ruleForm.sex">
+                <el-radio label="先生"></el-radio>
+                <el-radio label="女士"></el-radio>
+              </el-radio-group>
+            </el-form-item>
+             <el-form-item label="手机号" prop="phone">
+              <el-input
+                v-model.number="ruleForm.phone"
+                placeholder="请输入手机号"
+                maxlength="11"
+              ></el-input>
+            </el-form-item>
 
             <el-form-item class="button-center">
               <el-button type="primary" @click="submitForm('ruleForm')"
@@ -58,7 +93,7 @@
 </template>
 
 <script>
-import {register} from "@/api/index"
+import {UserRegister} from "@/api/index"
 export default {
   data() {
 
@@ -81,12 +116,41 @@ export default {
         callback();
       }
     };
+        //自定义校验
+    var checkPhone = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error("手机号不能为空"));
+      }
+      setTimeout(() => {
+        if (!Number.isInteger(value)) {
+          callback(new Error("请输入正确的手机号！"));
+        } else {
+          if (!/^1[3|4|5|7|8][0-9]\d{4,8}$/.test(value)) {
+            callback(new Error("请输入正确的手机号！"));
+          } else {
+            callback();
+          }
+        }
+      }, 1000);
+    };
     return {
+      pickerOptions: {
+        // disabledDate(time) {
+        //   //此条为设置禁止用户选择今天之前的日期，不包含今天。
+        //   //return time.getTime() <= (Date.now()-(24 * 60 * 60 * 1000));
+        //   //此条为设置禁止用户选择今天之前的日期，包含今天。
+        //   return time.getTime() <= Date.now();
+        // },
+      },
         //需要校验的变量内容
       ruleForm: {
         pass: "",
         checkPass: "",
         userName: "",
+        date1: "",
+        name: "",
+        sex: "先生",
+        phone: "",
       },
       //校验规则
       rules: {
@@ -102,6 +166,20 @@ export default {
             { required: true, message: '请输入用户名', trigger: 'blur' },
             { min: 4, max: 10, message: '长度在 4 到 10 个字符', trigger: 'blur' }
           ],
+        name: [
+          { required: true, message: "请输入姓名", trigger: "blur" },
+          { min: 2, max: 5, message: "最少输入两个字符", trigger: "blur" },
+        ],
+        date1: [
+          {
+            type: "date",
+            required: true,
+            message: "请选择日期",
+            trigger: "change",
+          },
+        ],
+        sex: [{ required: true, message: "请选择性别", trigger: "change" }],
+        phone: [{ validator: checkPhone, trigger: "blur", required: true }],
       },
     };
   },
@@ -115,10 +193,14 @@ export default {
           //alert("submit!");
           let info={
             username:this.ruleForm.userName,
-            password:this.ruleForm.checkPass
+            password:this.ruleForm.checkPass,
+            birthday:new Date(this.ruleForm.date1).format("yyyy-MM-dd"),
+            name:this.ruleForm.name,
+            sex:this.ruleForm.sex,
+            phone:this.ruleForm.phone
           }
           console.log(info)
-          register(info).then(Response=>{
+           UserRegister(info).then(Response=>{
             console.log("成功")
             console.log(Response)
 
@@ -135,10 +217,14 @@ export default {
                 type: "success",
               });
               setTimeout(()=>{
-                this.$router.push("Login")
+                this.$router.push("Home")
               },1000)
             }
           },error=>{
+              this.$message({
+                message: "注册失败！",
+                type: "error",
+              });
             console.log(error)
           })
         } else {
@@ -177,10 +263,10 @@ export default {
     .register-content {
       position: absolute;
       width: 350px;
-      height: 360px;
+      height: 600px;
       left: 0;
       right: 0;
-      top: 0;
+      top: 50px;
       bottom: 0;
       margin: auto;
       background-color: white;

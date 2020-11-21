@@ -217,6 +217,18 @@ export function updateAdministratorInfo(info){
   })
 }
 
+//普通用户注册
+export function UserRegister(info){
+  //console.log(info)
+  return axios({
+    method:"post",
+    url:`api/user/userRegister`,
+    data:info
+  })
+}
+
+
+
 //Date对象原型方法扩展
 Date.prototype.format = function (fmt) {
     //author: meizz

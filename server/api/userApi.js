@@ -568,4 +568,24 @@ router.post('/updateAdministratorInfo',(req,res)=>{
     })
    
 });
+
+//普通用户注册
+router.post('/userRegister',(req,res)=>{
+    var params=req.body;
+    var sql=`insert into user_login values('${params.username}','${params.password}',null);
+    insert into user_login_info values(null,'${params.name}',null,'${params.sex}','${params.birthday}',${params.phone})`;
+    conn.query(sql,function(error,result){
+        if(error){
+            console.log(error);
+            jsonWrite(res, error);
+        }
+        if(result){
+            //返回结果
+            jsonWrite(res, result);
+            console.log(result)
+        }
+    })
+});
+
+
 module.exports = router;

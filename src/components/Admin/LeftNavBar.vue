@@ -1,7 +1,7 @@
 <template>
     <div class="nav-wrapper">
         <div class="logo-wrapper">
-            <a href="/"><img src="../../assets/images/奥迪.png" alt="">
+            <a href="/#/Admin"><img src="../../assets/images/奥迪.png" alt="">
             <span class="logo-title">奥迪4S店管理系统</span></a>
         </div>
           <el-menu
